@@ -117,3 +117,5 @@ Note on version conventions:
 		 
 1.05 ??
         - fixed POD issues declared in tickets 7598, 51892, 79041 and 101238.
+        - fixed kwalitee issues: buildtool not executable, META.yml
+

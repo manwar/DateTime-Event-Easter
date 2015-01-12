@@ -3,6 +3,7 @@ README
 Todo
 Changes
 MANIFEST
+META.yml
 Makefile.PL
 lib/DateTime/Event/Easter.pm
 t/00load_pod.t
