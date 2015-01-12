@@ -299,6 +299,9 @@ sub _floor {
 
 1;
 __END__
+
+=encoding iso-8859-1
+
 =head1 NAME
 
 DateTime::Event::Easter - Returns Easter events for DateTime objects
@@ -330,12 +333,13 @@ DateTime::Event::Easter - Returns Easter events for DateTime objects
   $palm_sunday = DateTime::Event::Easter->new(day=>'Palm Sunday');
 
 
-  $dt2 = DateTime->new( year   => 2060,
-                        month  => 4,
-                        day    => 30,
+  $dt2 = DateTime->new( year   => 2006,
+                        month  =>    4,
+                        day    =>   30,
                       );
   
-  @set = $palm_sunday->as_list(from=>$dt, to=>$dt2, inclusive=>1);
+  $set  = $palm_sunday->as_set (from=>$dt, to=>$dt2, inclusive=>1);
+  @list = $palm_sunday->as_list(from=>$dt, to=>$dt2, inclusive=>1);
   # Sun, 13 Apr 2003 00:00:00 UTC
   # Sun, 04 Apr 2004 00:00:00 UTC
   # Sun, 20 Mar 2005 00:00:00 UTC
@@ -343,7 +347,7 @@ DateTime::Event::Easter - Returns Easter events for DateTime objects
   
   $datetime_set = $palm_sunday->as_set;
   # A set of every Palm Sunday ever. See C<DateTime::Set> for more information.
-  
+
 =head1 DESCRIPTION
 
 The DateTime::Event::Easter module returns Easter events for DateTime
@@ -365,7 +369,7 @@ March 21st. Easter Sunday is never on the full moon. Thus the earliest
 Easter can be is March 22nd.
 
 In the orthodox world, although they now use the Gregorian Calendar
-rather than the Julian, they still take the first full moon after the
+rather than the Julian, they still take the first full moon on or after the
 Julian March 21st. As the Julian calendar is slowly getting further and
 further out of sync with the Gregorian, the first full moon after this
 date can be a completely different one than for the western Easter. This
@@ -384,11 +388,11 @@ DateTime::Event::Easter understands two calculations for Easter. For
 simplicity we've called them 'western' and 'eastern'.
 
 Western Easter is the day celebrated by the Catholic and Protestant
-churches. It falls on the first Sunday on or after the the first Full
-Moon after March 21st.
+churches. It falls on the first Sunday after the first Full
+Moon on or after March 21st.
 
 Eastern Easter, as celebrated by the Eastern Orthodox Churches similarly
-falls on the first Sunday on or after the the first Full Moon after
+falls on the first Sunday after the first Full Moon on or after
 March 21st. However Eastern Easter uses March 21st in the Julian
 Calendar.
 
@@ -555,5 +559,5 @@ with this module.
 
 =head2 SEE ALSO
 
-L<DateTime>, L<DateTime::Calendar::Easter>, perl(1),
+L<DateTime>, L<DateTime::Calendar::Julian>, perl(1),
 http://datetime.perl.org.

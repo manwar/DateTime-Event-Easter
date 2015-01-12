@@ -115,3 +115,5 @@ Note on version conventions:
 	  values)
 	  Patch provided by Ronald Hill.
 		 
+1.05 ??
+        - fixed POD issues declared in tickets 7598, 51892, 79041 and 101238.
