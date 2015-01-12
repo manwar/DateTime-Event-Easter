@@ -1,3 +1,9 @@
+#
+#     Perl DateTime extension for computing the dates for Easter and related feasts
+#     Copyright (C) 2003-2004, 2015 Rick Measham and Jean Forget
+#
+#     See the license in the embedded documentation below.
+#
 package DateTime::Event::Easter;
 use DateTime;
 use DateTime::Set;
