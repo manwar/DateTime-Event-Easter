@@ -4,7 +4,7 @@
 #     Test script for DateTime::Event::Easter
 #     Copyright (C) 2003, 2004, 2015, Rick Measham and Jean Forget
 #
-#     This program is distributed under the same terms as Perl 5.16.3:
+#     This program is distributed under the same terms as Perl:
 #     GNU Public License version 1 or later and Perl Artistic License
 #
 #     You can find the text of the licenses in the F<LICENSE> file or at
