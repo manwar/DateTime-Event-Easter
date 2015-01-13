@@ -11,6 +11,7 @@ use Carp;
 use Params::Validate qw( validate SCALAR BOOLEAN OBJECT );
 
 use strict;
+use warnings;
 use vars qw(
     $VERSION @ISA @EXPORT @EXPORT_OK 
 );
