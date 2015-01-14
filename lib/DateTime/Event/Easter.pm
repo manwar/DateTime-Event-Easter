@@ -429,7 +429,7 @@ This parameter also allows the following abreviations: day =>
 By default, all returns are single points in time. Namely they are the
 moment of midnight for the day in question. If you want Easter 2003 then
 you actually get back midnight of April 20th 2003. If you specify 
-C<as => 'span'> in your constructor, you'll now receive 24 hour spans
+C<< as => 'span' >> in your constructor, you'll now receive 24 hour spans
 rather than moments (or 'points'). I<See also the C<as_span> and C<as_point>
 methods below>
 
@@ -485,7 +485,7 @@ Returns a DateTime::Set of Easter Events.
 In the past this method used the same syntax as 'as_list' above. However
 we now allow both the above syntax as well as the full options allowable
 when creating sets with C<DateTime::Set>. This means you can call
-C<$datetime_set = $palm_sunday->as_set;> and it will return a 
+C<<$datetime_set = $palm_sunday->as_set; >> and it will return a 
 C<DateTime::Set> of all Palm Sundays. See C<DateTime::Set> for more information.
 
 
