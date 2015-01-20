@@ -4,7 +4,7 @@ use ExtUtils::MakeMaker;
 WriteMakefile(
     NAME         => 'DateTime::Event::Easter',
     VERSION_FROM => 'lib/DateTime/Event/Easter.pm', # finds $VERSION
-    AUTHOR       => 'Rick Measham (rickm@cpan.org)',
+    AUTHOR       => [ 'Rick Measham (rickm@cpan.org)', 'Jean Forget <JFORGET@cpan.org>' ],
     ABSTRACT     => 'Returns Easter events for DateTime objects',
     PREREQ_PM => {
                     'DateTime'         => 0.16,
@@ -14,4 +14,5 @@ WriteMakefile(
                     'DateTime::Calendar::Julian' => 0,
                  },
     'LICENSE'		=> 'perl',
+    'MIN_PERL_VERSION' => '5.6.1',
 );

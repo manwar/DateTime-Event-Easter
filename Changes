@@ -116,6 +116,8 @@ Note on version conventions:
 	  Patch provided by Ronald Hill.
 		 
 1.05 ??
-        - fixed POD issues declared in tickets 7598, 51892, 79041 and 101238.
-        - fixed kwalitee issues: buildtool not executable, META.yml
+        - New co-maintainer: Jean Forget
+        - Fixed POD issues declared in tickets 7598, 51892, 79041 and 101238.
+          Patches provided by Slaven Rezic and Frank Wiegand.
+        - Fixed kwalitee issues: buildtool not executable, META.yml
 
