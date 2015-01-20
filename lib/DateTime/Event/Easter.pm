@@ -28,13 +28,28 @@ sub new {
     my %args  = validate( @_,
                     {   easter  => { type => SCALAR, default=>'western', optional=>1, regex => qr/^(western|eastern)$/i },
                         day     => { type => SCALAR, default=>'sunday', optional=>1 },
-						as		=> { type => SCALAR, default=>'point', optional=>1 },
+			as	=> { type => SCALAR, default=>'point', optional=>1 },
                     }
                 );
     
     my %self;
     my $offset;
-    if ($args{day} =~/^palm/i) {
+    if ($args{day} =~/^fat/i) {
+        $offset = -47;
+    }
+    elsif ($args{day} =~/^ash/i) {
+        $offset = -46;
+    }
+    elsif ($args{day} =~/^ascension/i) {
+        $offset = 39;
+    }
+    elsif ($args{day} =~/^pentecost/i) {
+        $offset = 49;
+    }
+    elsif ($args{day} =~/^trinity/i) {
+        $offset = 56;
+    }
+    elsif ($args{day} =~/^palm/i) {
         $offset = -7;
     } elsif ($args{day} =~/saturday/i) {
         $offset = -1;
@@ -409,8 +424,8 @@ specifically ask for Eastern.
 
 If this parameter is not supplied, the western Easter will be used.
 
-=item * day => ([Easter Sunday]|Palm Sunday|Maundy Thursday|Good
-Friday|Black Saturday|I<n>)
+=item * day => ([Easter Sunday]|Palm Sunday|Maundy Thursday|Good Friday|Black
+Saturday|Fat Tuesday|Ash Wednesday|Ascension|Pentecost|Trinity Sunday|I<n>)
 
 When constructed with a day parameter, the method can return associated
 Easter days other than Easter Sunday. The constructor also allows an
@@ -543,6 +558,8 @@ Bugs should be reported through rt.cpan.org.
 
 Rick Measham <rickm@cpan.org>
 
+Co-maintainer Jean Forget <jforget@cpan.org>
+
 =head2 CREDITS
 
 Much help from the DateTime mailing list, especially from:
@@ -555,14 +572,37 @@ B<Dave Rolsky> - who picked nits, designed DateTime itself and leads the project
 
 B<Martin Hasch> - who pointed out the posibility of memory leak with an early beta
 
+B<Joe Orost> and B<Andreas König> - for RT tickets about the POD documentation
+
+B<Frank Wiegand> and B<Slaven Rezic> - for patches fixing the POD problems
+
 =head2 COPYRIGHT
 
-(c) Copyright  2003 Rick Measham. All rights reserved. This program is
-free software; you can redistribute it and/or modify it under the same
-terms as Perl itself.
+(c) Copyright 2003, 2004, 2015 Rick Measham and Jean Forget. All
+rights reserved. This program is free software; you can redistribute
+it and/or modify it under the same terms as Perl itself: GNU
+Public License version 1 or later and Perl Artistic License.
 
-The full text of the license can be found in the LICENSE file included
-with this module.
+The full text of the license can be found in the F<LICENSE> file
+included with this module or at
+L<http://www.perlfoundation.org/artistic_license_1_0> and
+L<http://www.gnu.org/licenses/gpl-1.0.html>.
+
+Here is the summary of GPL:
+
+This program is  free software; you can redistribute  it and/or modify
+it under the  terms of the GNU General Public  License as published by
+the Free  Software Foundation; either  version 1, or (at  your option)
+any later version.
+
+This program  is distributed in the  hope that it will  be useful, but
+WITHOUT   ANY  WARRANTY;   without  even   the  implied   warranty  of
+MERCHANTABILITY  or FITNESS  FOR A  PARTICULAR PURPOSE.   See  the GNU
+General Public License for more details.
+
+You  should have received  a copy  of the  GNU General  Public License
+along with this program; if not, see <http://www.gnu.org/licenses/> or
+write to the Free Software Foundation, Inc., L<http://fsf.org>.
 
 =head2 SEE ALSO
 

@@ -26,7 +26,7 @@
 #
 use strict;
 
-use Test::More tests => 5;
+use Test::More tests => 11;
 
 use DateTime::Event::Easter qw/easter/;
 
@@ -60,10 +60,46 @@ is( $event_maundy_thursday->previous($post_easter_2003)->ymd,
 	"Day: Maundy Thursday is correct",
 );
 
-my $event_pentecost = DateTime::Event::Easter->new(day=>49);
+my $event_fat_tuesday = DateTime::Event::Easter->new(day=>'fat tuesday');
+is( $event_fat_tuesday->previous($post_easter_2003)->ymd, 
+	'2003-03-04', 
+	"Day: Fat Tuesday is correct",
+);
+
+my $event_ash_wednesday = DateTime::Event::Easter->new(day=>'ash wednesday');
+is( $event_ash_wednesday->previous($post_easter_2003)->ymd, 
+	'2003-03-05', 
+	"Day: Ash Wednesday is correct",
+);
+
+
+my $event_ascension = DateTime::Event::Easter->new(day=>'ascension');
+is( $event_ascension->previous($post_easter_2003)->ymd, 
+	'2003-05-29', 
+	"Day: Ascension is correct",
+);
+
+my $event_pentecost = DateTime::Event::Easter->new(day=>'pentecost');
 is( $event_pentecost->previous($post_easter_2003)->ymd, 
+	'2003-06-08', 
+	"Day: Pentecost is correct",
+);
+
+my $event_trinity_sunday = DateTime::Event::Easter->new(day=>'trinity sunday');
+is( $event_trinity_sunday->previous($post_easter_2003)->ymd, 
+	'2003-06-15', 
+	"Day: Trinity Sunday is correct",
+);
+
+my $event_pentecost1 = DateTime::Event::Easter->new(day=>49);
+is( $event_pentecost1->previous($post_easter_2003)->ymd, 
 	'2003-06-08', 
 	"Day: +49 is correct",
 );
 
+my $event_ash_wednesday1 = DateTime::Event::Easter->new(day=>-46);
+is( $event_ash_wednesday1->previous($post_easter_2003)->ymd, 
+	'2003-03-05', 
+	"Day: -46 is correct",
+);
 
