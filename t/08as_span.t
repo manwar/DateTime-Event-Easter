@@ -26,7 +26,7 @@
 #
 use strict;
 
-use Test::More tests => 4;
+use Test::More tests => 8;
 
 use DateTime::Event::Easter qw/easter/;
 
@@ -72,3 +72,15 @@ is( $span_easter_sunday->contains( $just_after ),
 	0,
 	"Following dates are not included",
 );
+
+$event_easter_sunday->as_point();
+
+$span_easter_sunday = $event_easter_sunday->previous($post_easter_2003);
+ok(   $span_easter_sunday->isa("DateTime"),       "Result is a DateTime object");
+ok( ! $span_easter_sunday->isa("DateTime::Span"), "Result is no longer a span");
+
+$event_easter_sunday->as_span();
+
+$span_easter_sunday = $event_easter_sunday->previous($span_easter_sunday);
+ok( ! $span_easter_sunday->isa("DateTime"),       "Result is no longer a DateTime object");
+ok(   $span_easter_sunday->isa("DateTime::Span"), "Result is again a span");
