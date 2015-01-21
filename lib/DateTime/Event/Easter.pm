@@ -28,7 +28,7 @@ sub new {
     my %args  = validate( @_,
                     {   easter  => { type => SCALAR, default=>'western', optional=>1, regex => qr/^(western|eastern)$/i },
                         day     => { type => SCALAR, default=>'sunday', optional=>1 },
-			as	=> { type => SCALAR, default=>'point', optional=>1 },
+                        as      => { type => SCALAR, default=>'point', optional=>1 },
                     }
                 );
     
@@ -38,7 +38,7 @@ sub new {
         $offset = -47;
     }
     elsif ($args{day} =~/^ash/i) {
-	# First day of lent. Lent lasts for 40 days, excluding sundays.
+        # First day of lent. Lent lasts for 40 days, excluding sundays.
         # This translates to a 46-day duration, including sundays.
         $offset = -46;
     }
@@ -70,11 +70,11 @@ sub new {
     if ($self{easter} eq 'eastern') {
         require DateTime::Calendar::Julian;
     }
-	
-	# Set to return points or spans
-	die("Argument 'as' must be 'point' or 'span'.") unless $args{as}=~/^(point|span)s?$/i;
-	$self{as} = lc $1;
-	
+
+    # Set to return points or spans
+    die("Argument 'as' must be 'point' or 'span'.") unless $args{as}=~/^(point|span)s?$/i;
+    $self{as} = lc $1;
+
     return bless \%self, $class;
     
 }
@@ -309,18 +309,6 @@ sub eastern_easter {
     return DateTime::Calendar::Julian->new(year=>$year, month=>$month, day=>$day);
 }
 
-
-
-sub _floor {
-    my $x  = shift;
-    my $ix = int $x;
-    if ($ix <= $x) {
-        return $ix;
-    } else {
-        return $ix - 1;
-    }
-}
-
 # Ending a module with an unspecified number, which could be zero, is wrong.
 # Therefore the custom of ending a module with a boring "1".
 # Instead of that, end it with some verse.
@@ -387,10 +375,11 @@ objects. From a given datetime, it can tell you the previous, the
 following and the closest Easter event. The 'is' method will tell you if
 the given DateTime is an Easter Event.
 
-Easter Events can be Palm Sunday, Maundy Thursday, Good Friday, Black
-Saturday and Easter Sunday. If that's not enough, the module will also
-accept an offset so you can get the date for Pentecost (49 days after
-Easter Sunday) by passing 49.
+Easter Events can be Fat Tuesday, Ash Wednesday, Palm Sunday, Maundy
+Thursday, Good Friday, Black Saturday, Easter Sunday, Ascension,
+Pentecost and Trinity Sunday. If that's not enough, the module will
+also accept an offset so you can get the date for Quasimodo (the next
+sunday after Easter Sunday) by passing 7.
 
 
 =head1 BACKGROUND
@@ -447,7 +436,7 @@ Easter Sunday (which is the churches' official day for 'Easter', think
 of it a 'Easter Day' if you want)
 
 This parameter also allows the following abreviations: day =>
-([Sunday]|Palm|Thursday|Friday|Saturday)
+([Sunday]|Palm|Thursday|Friday|Saturday|Fat|Ash|Ascension|Pentecost|Trinity)
 
 =item * as => ([point]|span)
 
@@ -510,7 +499,7 @@ Returns a DateTime::Set of Easter Events.
 In the past this method used the same syntax as 'as_list' above. However
 we now allow both the above syntax as well as the full options allowable
 when creating sets with C<DateTime::Set>. This means you can call
-C<<$datetime_set = $palm_sunday->as_set; >> and it will return a 
+C<< $datetime_set = $palm_sunday->as_set; >> and it will return a 
 C<DateTime::Set> of all Palm Sundays. See C<DateTime::Set> for more information.
 
 
