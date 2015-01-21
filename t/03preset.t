@@ -26,7 +26,7 @@
 #
 use strict;
 
-use Test::More tests => 11;
+use Test::More tests => 12;
 
 use DateTime::Event::Easter qw/easter/;
 
@@ -58,6 +58,12 @@ my $event_maundy_thursday = DateTime::Event::Easter->new(day=>'maundy thursday')
 is( $event_maundy_thursday->previous($post_easter_2003)->ymd, 
 	'2003-04-17', 
 	"Day: Maundy Thursday is correct",
+);
+
+my $event_palm_sunday = DateTime::Event::Easter->new(day=>'palm sunday');
+is( $event_palm_sunday->previous($post_easter_2003)->ymd, 
+	'2003-04-13', 
+	"Day: Palm Sunday is correct",
 );
 
 my $event_fat_tuesday = DateTime::Event::Easter->new(day=>'fat tuesday');
