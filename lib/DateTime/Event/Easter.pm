@@ -541,10 +541,10 @@ Western Easter Sunday in that year.
 
 =over 4
 
-=item * http://datetime.perl.org - The official home of the DateTime
-project
+=item * https://github.com/houseabsolute/DateTime.pm/wiki - The official wiki
+of the DateTime project
 
-=item * http://www.tondering.dk/claus/calendar.html - Claus Tøndering's
+=item * https://www.tondering.dk/claus/calendar.html - Claus Tøndering's
 calendar FAQ
 
 =back
@@ -587,8 +587,8 @@ Public License version 1 or later and Perl Artistic License.
 
 The full text of the license can be found in the F<LICENSE> file
 included with this module or at
-L<http://www.perlfoundation.org/artistic_license_1_0> and
-L<http://www.gnu.org/licenses/gpl-1.0.html>.
+L<https://dev.perl.org/licenses/artistic.html>
+and L<https://www.gnu.org/licenses/gpl-1.0.html>.
 
 Here is the summary of GPL:
 
@@ -603,10 +603,11 @@ MERCHANTABILITY  or FITNESS  FOR A  PARTICULAR PURPOSE.   See  the GNU
 General Public License for more details.
 
 You  should have received  a copy  of the  GNU General  Public License
-along with this program; if not, see <http://www.gnu.org/licenses/> or
-write to the Free Software Foundation, Inc., L<http://fsf.org>.
+along with this program; if not, see <https://www.gnu.org/licenses/> or
+write to the Free Software Foundation, Inc., L<https://fsf.org>.
 
 =head2 SEE ALSO
 
 L<DateTime>, L<DateTime::Calendar::Julian>, perl(1),
-http://datetime.perl.org.
+
+https://github.com/houseabsolute/DateTime.pm/wiki

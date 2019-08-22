@@ -9,8 +9,8 @@
 #     license Attribution-NoDerivs 2.0 Generic (CC BY-ND 2.0).
 #
 #     You can find the text of the licenses in the F<LICENSE> file or at
-#     L<http://www.perlfoundation.org/artistic_license_1_0>
-#     and L<http://www.gnu.org/licenses/gpl-1.0.html>.
+#     L<https://dev.perl.org/licenses/artistic.html>
+#     and L<https://www.gnu.org/licenses/gpl-1.0.html>.
 #     The Creative Commons License is available at
 #     L<https://creativecommons.org/licenses/by-nd/2.0/>.
 #
@@ -28,7 +28,7 @@
 #
 #     You should have received a copy of the GNU General Public License
 #     along with this program; if not, write to the Free Software Foundation,
-#     Inc., <http://www.fsf.org/>.
+#     Inc., <https://www.fsf.org/>.
 #
 
 use utf8;
