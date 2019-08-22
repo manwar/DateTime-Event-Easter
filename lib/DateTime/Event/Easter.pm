@@ -1,10 +1,13 @@
+# -*- encoding: utf-8; indent-tabs-mode: nil -*-
 #
 #     Perl DateTime extension for computing the dates for Easter and related feasts
-#     Copyright (C) 2003-2004, 2015 Rick Measham and Jean Forget
+#     Copyright Â© 2003-2004, 2015, 2019 Rick Measham and Jean Forget, all rights reserved
 #
 #     See the license in the embedded documentation below.
 #
 package DateTime::Event::Easter;
+
+use utf8;
 use DateTime;
 use DateTime::Set;
 use Carp;
@@ -313,14 +316,14 @@ sub eastern_easter {
 # Therefore the custom of ending a module with a boring "1".
 # Instead of that, end it with some verse.
 q{
-Il reviendra à Pâques, mironton mironton mirontaine,
-Il reviendra à Pâques
-Ou à la Trinité.
-Ou à la Trinité...
+Il reviendra Ã  PÃ¢ques, mironton mironton mirontaine,
+Il reviendra Ã  PÃ¢ques
+Ou Ã  la TrinitÃ©.
+Ou Ã  la TrinitÃ©...
 };
 __END__
 
-=encoding iso-8859-1
+=encoding utf-8
 
 =head1 NAME
 
@@ -541,7 +544,7 @@ Western Easter Sunday in that year.
 =item * http://datetime.perl.org - The official home of the DateTime
 project
 
-=item * http://www.tondering.dk/claus/calendar.html - Claus Tøndering's
+=item * http://www.tondering.dk/claus/calendar.html - Claus TÃ¸ndering's
 calendar FAQ
 
 =back
@@ -571,13 +574,13 @@ B<Dave Rolsky> - who picked nits, designed DateTime itself and leads the project
 
 B<Martin Hasch> - who pointed out the posibility of memory leak with an early beta
 
-B<Joe Orost> and B<Andreas König> - for RT tickets about the POD documentation
+B<Joe Orost> and B<Andreas KÃ¶nig> - for RT tickets about the POD documentation
 
-B<Frank Wiegand> and B<Slaven Rezic> - for patches fixing the POD problems
+B<Frank Wiegand> and B<Slaven ReziÄ‡> - for patches fixing the POD problems
 
 =head2 COPYRIGHT
 
-(c) Copyright 2003, 2004, 2015 Rick Measham and Jean Forget. All
+Â© Copyright 2003, 2004, 2015, 2019 Rick Measham and Jean Forget. All
 rights reserved. This program is free software; you can redistribute
 it and/or modify it under the same terms as Perl itself: GNU
 Public License version 1 or later and Perl Artistic License.
