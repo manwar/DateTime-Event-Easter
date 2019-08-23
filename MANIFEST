@@ -15,4 +15,6 @@ t/05sets.t
 t/06known.t
 t/07eastknown.t
 t/08as_span.t
+t/09list_of_spans.t
+t/10set_of_spans.t 
 eg/rome_1944
