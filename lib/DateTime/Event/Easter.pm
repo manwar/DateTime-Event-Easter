@@ -316,8 +316,8 @@ sub eastern_easter {
 # Therefore the custom of ending a module with a boring "1".
 # Instead of that, end it with some verse.
 q{
-Il reviendra à Pâques, mironton mironton mirontaine,
-Il reviendra à Pâques
+Il reviendra z-à Pâques, mironton mironton mirontaine,
+Il reviendra z-à Pâques
 Ou à la Trinité.
 Ou à la Trinité...
 };
