@@ -45,8 +45,8 @@ my @hours       = ([0, 0, 0, 0], [12, 0, 0, 0], [23, 59, 59, 999_999_999]);
 plan(tests => 2 * @hours * (@dates_in + @dates_out + @dates_maybe));
 
 my $event_easter_sunday = DateTime::Event::Easter->new(
-	day => 'easter sunday',
-	as  => 'span',
+        day => 'easter sunday',
+        as  => 'span',
 );
 
 my @exclusive = $event_easter_sunday->as_list(from => $begin, to => $end);
