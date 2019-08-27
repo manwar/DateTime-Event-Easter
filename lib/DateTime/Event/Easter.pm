@@ -29,40 +29,40 @@ $VERSION = '1.05';
 sub new {
     my $class = shift;
     my %args  = validate( @_,
-                    {   easter  => { type => SCALAR, default=>'western', optional => 1, regex => qr/^(western|eastern)$/i },
-                        day     => { type => SCALAR, default=>'sunday' , optional => 1 },
-                        as      => { type => SCALAR, default=>'point'  , optional => 1 },
+                    {   easter  => { type => SCALAR, default => 'western', optional => 1, regex => qr/^(western|eastern)$/i },
+                        day     => { type => SCALAR, default => 'sunday' , optional => 1 },
+                        as      => { type => SCALAR, default => 'point'  , optional => 1 },
                     }
                 );
     
     my %self;
     my $offset;
-    if ($args{day} =~/^fat/i) {
+    if ($args{day} =~ /^fat/i) {
         $offset = -47;
     }
-    elsif ($args{day} =~/^ash/i) {
+    elsif ($args{day} =~ /^ash/i) {
         # First day of lent. Lent lasts for 40 days, excluding sundays.
         # This translates to a 46-day duration, including sundays.
         $offset = -46;
     }
-    elsif ($args{day} =~/^ascension/i) {
+    elsif ($args{day} =~ /^ascension/i) {
         $offset = 39;
     }
-    elsif ($args{day} =~/^pentecost/i) {
+    elsif ($args{day} =~ /^pentecost/i) {
         $offset = 49;
     }
-    elsif ($args{day} =~/^trinity/i) {
+    elsif ($args{day} =~ /^trinity/i) {
         $offset = 56;
     }
-    elsif ($args{day} =~/^palm/i) {
+    elsif ($args{day} =~ /^palm/i) {
         $offset = -7;
-    } elsif ($args{day} =~/saturday/i) {
+    } elsif ($args{day} =~ /saturday/i) {
         $offset = -1;
-    } elsif ($args{day} =~/friday/i) {
+    } elsif ($args{day} =~ /friday/i) {
         $offset = -2;
-    } elsif ($args{day} =~/thursday/i) {
+    } elsif ($args{day} =~ /thursday/i) {
         $offset = -3;
-    } elsif ($args{day} =~/^\-?\d+$/i) {
+    } elsif ($args{day} =~ /^\-?\d+$/i) {
         $offset = $args{day};
     } else {
         $offset = 0;
@@ -75,7 +75,7 @@ sub new {
     }
 
     # Set to return points or spans
-    die("Argument 'as' must be 'point' or 'span'.") unless $args{as}=~/^(point|span)s?$/i;
+    die("Argument 'as' must be 'point' or 'span'.") unless $args{as} =~ /^(point|span)s?$/i;
     $self{as} = lc $1;
 
     return bless \%self, $class;
@@ -233,27 +233,27 @@ sub as_set {
         my $self = shift;
         my %args = @_;
         if (exists $args{inclusive}) {
-                croak("You must specify both a 'from' and a 'to' datetime") unless 
-                        ref($args{to})=~/DateTime/ and
-                        ref($args{from})=~/DateTime/;
+                croak("You must specify both a 'from' and a 'to' datetime")
+                          unless ref($args{to})   =~ /DateTime/
+                          and    ref($args{from}) =~ /DateTime/;
                 if ($args{inclusive}) {
-                        $args{start} = delete $args{from};
-                        $args{end} = delete $args{to};
+                        $args{start}  = delete $args{from};
+                        $args{end}    = delete $args{to};
                 } else {
-                        $args{after} = delete $args{from};
+                        $args{after}  = delete $args{from};
                         $args{before} = delete $args{to};
                 }
                 delete $args{inclusive};
         } elsif (exists $args{from} or exists $args{to}) {
-                croak("You must specify both a 'from' and a 'to' datetime") unless 
-                        ref($args{to})=~/DateTime/ and
-                        ref($args{from})=~/DateTime/;
-                        $args{after} = delete $args{from};
+                croak("You must specify both a 'from' and a 'to' datetime")
+                          unless ref($args{to})   =~ /DateTime/
+                          and    ref($args{from}) =~ /DateTime/;
+                        $args{after}  = delete $args{from};
                         $args{before} = delete $args{to};
         }
         return DateTime::Set->from_recurrence( 
-                next            => sub { return $_[0] if $_[0]->is_infinite; $self->following( $_[0] ) },
-                previous        => sub { return $_[0] if $_[0]->is_infinite; $self->previous(  $_[0] ) },
+                next      => sub { return $_[0] if $_[0]->is_infinite; $self->following( $_[0] ) },
+                previous  => sub { return $_[0] if $_[0]->is_infinite; $self->previous(  $_[0] ) },
                 %args
         );
 }
