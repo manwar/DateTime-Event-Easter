@@ -29,9 +29,9 @@ $VERSION = '1.05';
 sub new {
     my $class = shift;
     my %args  = validate( @_,
-                    {   easter  => { type => SCALAR, default=>'western', optional=>1, regex => qr/^(western|eastern)$/i },
-                        day     => { type => SCALAR, default=>'sunday', optional=>1 },
-                        as      => { type => SCALAR, default=>'point', optional=>1 },
+                    {   easter  => { type => SCALAR, default=>'western', optional => 1, regex => qr/^(western|eastern)$/i },
+                        day     => { type => SCALAR, default=>'sunday' , optional => 1 },
+                        as      => { type => SCALAR, default=>'point'  , optional => 1 },
                     }
                 );
     
@@ -145,11 +145,11 @@ sub closest {
     }
 
     if ($self->is($dt)) {
-		my $easter = $dt->clone->truncate(to=>'day');
-	    $easter = $class->from_object(object=>$easter) if (ref($easter) ne $class);
-		return ($self->{as} eq 'span') 
-			? _tospan($easter)
-			: $easter;
+                my $easter = $dt->clone->truncate(to=>'day');
+            $easter = $class->from_object(object=>$easter) if (ref($easter) ne $class);
+                return ($self->{as} eq 'span') 
+                        ? _tospan($easter)
+                        : $easter;
     }
     my $following_easter = $self->following($dt);
     my $following_delta  = $following_easter - $dt;
@@ -230,32 +230,32 @@ sub as_old_set {
     return DateTime::Set->from_datetimes( dates => [ $self->as_list(@_) ] );
 }
 sub as_set {
-	my $self = shift;
-	my %args = @_;
-	if (exists $args{inclusive}) {
-		croak("You must specify both a 'from' and a 'to' datetime") unless 
-			ref($args{to})=~/DateTime/ and
-			ref($args{from})=~/DateTime/;
-		if ($args{inclusive}) {
-			$args{start} = delete $args{from};
-			$args{end} = delete $args{to};
-		} else {
-			$args{after} = delete $args{from};
-			$args{before} = delete $args{to};
-		}
-		delete $args{inclusive};
-	} elsif (exists $args{from} or exists $args{to}) {
-		croak("You must specify both a 'from' and a 'to' datetime") unless 
-			ref($args{to})=~/DateTime/ and
-			ref($args{from})=~/DateTime/;
-			$args{after} = delete $args{from};
-			$args{before} = delete $args{to};
-	}
-	return DateTime::Set->from_recurrence( 
-		next		=> sub { return $_[0] if $_[0]->is_infinite; $self->following( $_[0] ) },
-		previous	=> sub { return $_[0] if $_[0]->is_infinite; $self->previous(  $_[0] ) },
-		%args
-	);
+        my $self = shift;
+        my %args = @_;
+        if (exists $args{inclusive}) {
+                croak("You must specify both a 'from' and a 'to' datetime") unless 
+                        ref($args{to})=~/DateTime/ and
+                        ref($args{from})=~/DateTime/;
+                if ($args{inclusive}) {
+                        $args{start} = delete $args{from};
+                        $args{end} = delete $args{to};
+                } else {
+                        $args{after} = delete $args{from};
+                        $args{before} = delete $args{to};
+                }
+                delete $args{inclusive};
+        } elsif (exists $args{from} or exists $args{to}) {
+                croak("You must specify both a 'from' and a 'to' datetime") unless 
+                        ref($args{to})=~/DateTime/ and
+                        ref($args{from})=~/DateTime/;
+                        $args{after} = delete $args{from};
+                        $args{before} = delete $args{to};
+        }
+        return DateTime::Set->from_recurrence( 
+                next            => sub { return $_[0] if $_[0]->is_infinite; $self->following( $_[0] ) },
+                previous        => sub { return $_[0] if $_[0]->is_infinite; $self->previous(  $_[0] ) },
+                %args
+        );
 }
 
 sub as_span {
@@ -272,8 +272,8 @@ sub as_point {
 
 sub _tospan {
    return DateTime::Span->from_datetime_and_duration(
-		start => $_[0],
-		hours => 24,
+                start => $_[0],
+                hours => 24,
    );
 }
 
@@ -343,8 +343,8 @@ DateTime::Event::Easter - Returns Easter events for DateTime objects
   use DateTime::Event::Easter;
   
   $dt = DateTime->new( year   => 2002,
-                       month  => 3,
-                       day    => 31,
+                       month  =>    3,
+                       day    =>   31,
                      );
   
   

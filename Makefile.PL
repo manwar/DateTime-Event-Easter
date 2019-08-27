@@ -36,11 +36,11 @@ WriteMakefile(
     ABSTRACT     => 'Returns Easter events for DateTime objects',
     PREREQ_PM => {
                     'DateTime'         => 0.16,
-		    'DateTime::Set'    => 0.08,
+                    'DateTime::Set'    => 0.08,
                     'Carp'             => 0,
                     'Params::Validate' => 0,
                     'DateTime::Calendar::Julian' => 0,
                  },
-    'LICENSE'		=> 'perl',
+    'LICENSE'           => 'perl',
     'MIN_PERL_VERSION' => '5.6.1',
 );
