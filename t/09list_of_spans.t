@@ -32,69 +32,50 @@ use Test::More;
 
 use DateTime::Event::Easter qw/easter/;
 
-plan(tests => 1);
 
-my $begin = DateTime->new( year  => 2018, month => 8, day   => 28);
-my $end   = DateTime->new( year  => 2020, month => 8, day   => 28);
+my $begin = DateTime->new( year  => 2018, month => 4, day   =>  1);
+my $end   = DateTime->new( year  => 2021, month => 4, day   =>  4);
 
-my $just_before_2019 = DateTime->new(
-	year => 2019, month  => 4,  day    => 20,
-	hour => 23,   minute => 59, second => 59, nanosecond => 999999999
-);
-my $just_after_2019 = DateTime->new(
-	year => 2019, month  => 4,  day    => 22,
-	hour => 0,    minute => 0,  second => 0,  nanosecond => 1
-);
-my $just_before_2020 = DateTime->new(
-	year => 2020, month  => 4,  day    => 11,
-	hour => 23,   minute => 59, second => 59, nanosecond => 999999999
-);
-my $just_after_2020 = DateTime->new(
-	year => 2020, month  => 4,  day    => 13,
-	hour => 0,    minute => 0,  second => 0,  nanosecond => 1
-);
+my @dates_in    = ([2019, 4, 21], [2020, 4, 12]);
+my @dates_out   = ([2018, 3, 31], [2018, 4,  2], [2019, 4, 20], [2019, 4, 22], [2020, 4, 11], [2020, 4, 13], [2021, 4, 3], [2021, 4, 5]);
+my @dates_maybe = ([2018, 4,  1], [2021, 4,  4]);
+
+my @hours       = ([0, 0, 0, 0], [12, 0, 0, 0], [23, 59, 59, 999_999_999]);
+
+plan(tests => 2 * @hours * (@dates_in + @dates_out + @dates_maybe));
 
 my $event_easter_sunday = DateTime::Event::Easter->new(
 	day => 'easter sunday',
 	as  => 'span',
 );
 
-my @list = $event_easter_sunday->as_list(from => $begin, to => $end);
+my @exclusive = $event_easter_sunday->as_list(from => $begin, to => $end);
+my @inclusive = $event_easter_sunday->as_list(from => $begin, to => $end, inclusive => 1);
 
-ok(1); # For the moment, just make sure it does not crash.
+check( \@exclusive, [ @dates_in                ], 1,  " within span of exclusive list" );
+check( \@exclusive, [ @dates_out, @dates_maybe ], 0, " outside span of exclusive list");
+check( \@inclusive, [ @dates_in,  @dates_maybe ], 1,  " within span of inclusive list" );
+check( \@inclusive, [ @dates_out               ], 0, " outside span of inclusive list");
 
-__END__
+sub check {
+  my ($ref_list, $ref_dates, $expected, $msg) = @_;
+  my @list  = @$ref_list;
+  my @dates = @$ref_dates;
+  for (@dates) {
+    my ($yyyy, $mm, $dd) = @$_;
+    for (@hours) {
+      my ($hr, $mn, $s, $ns) = @$_;
+      my $date = DateTime->new(year => $yyyy, month => $mm, day => $dd, hour => $hr, minute => $mn, second => $s, nanosecond => $ns);
+      my $found = 0;
+      for my $span (@list) {
+        if ($span->contains($date)) {
+          $found = 1;
+          last;
+        }
+      }
+      ok ($found == $expected, $date->datetime . $msg);
+    }
+  }
+}
 
-my $span_easter_sunday = $event_easter_sunday->previous($post_easter_2003);
 
-is( $span_easter_sunday->min->datetime, 
-	'2003-04-20T00:00:00', 
-	"Easter Sunday span starts at midnight",
-);
-
-is( $span_easter_sunday->max->datetime, 
-	'2003-04-21T00:00:00', 
-	"Easter Sunday span end at following midnight",
-);
-
-is( $span_easter_sunday->contains( $just_before ), 
-	0,
-	"Previous dates are not included",
-);
-
-is( $span_easter_sunday->contains( $just_after ), 
-	0,
-	"Following dates are not included",
-);
-
-$event_easter_sunday->as_point();
-
-$span_easter_sunday = $event_easter_sunday->previous($post_easter_2003);
-ok(   $span_easter_sunday->isa("DateTime"),       "Result is a DateTime object");
-ok( ! $span_easter_sunday->isa("DateTime::Span"), "Result is no longer a span");
-
-$event_easter_sunday->as_span();
-
-$span_easter_sunday = $event_easter_sunday->previous($span_easter_sunday);
-ok( ! $span_easter_sunday->isa("DateTime"),       "Result is no longer a DateTime object");
-ok(   $span_easter_sunday->isa("DateTime::Span"), "Result is again a span");

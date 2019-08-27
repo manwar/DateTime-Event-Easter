@@ -188,7 +188,7 @@ sub as_list {
     my %args  = validate( @_,
                     {   from        => { type => OBJECT },
                         to          => { type => OBJECT },
-                        inclusive   => { type => SCALAR, default=>0 },
+                        inclusive   => { type => SCALAR, default => 0 },
                     }
                 );
     
@@ -199,21 +199,30 @@ sub as_list {
     
     if ($args{inclusive}) {
         if ($self->is($args{from})) {
-            push(@set,$args{from});
+            push @set, ($self->{as} eq 'span') 
+                       ? _tospan($args{from})
+                       : $args{from};
         }
         if ($self->is($args{to})) {
-            push(@set,$args{to});
+            push @set, ($self->{as} eq 'span') 
+                       ? _tospan($args{to})
+                       : $args{to};
         }
     }
     
     my $checkdate = $args{from};
 
     while ($checkdate < $args{to}) {
-        $checkdate = $self->following($checkdate);
-        push(@set,$checkdate) if ($checkdate < $args{to});
+        my $check_obj = $self->following($checkdate);
+        $checkdate = ($self->{as} eq 'span') 
+                   ? $check_obj->start
+                   : $check_obj;
+        push(@set, $check_obj) if ($checkdate < $args{to});
     }
     
-    return sort @set;
+    return ($self->{as} eq 'span')
+           ? sort { $a->start cmp $b->start} @set
+           : sort @set;
 }
 
 sub as_old_set {
