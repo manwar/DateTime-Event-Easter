@@ -28,7 +28,7 @@
 #
 use strict;
 
-use Test::More tests => 34;
+use Test::More;
 
 use DateTime::Event::Easter qw/easter/;
 
@@ -39,6 +39,8 @@ my @non_inclusive_expect = qw|1902-03-30 1903-04-12 1904-04-03
 my @inclusive_expect     = qw|1917-04-08 1918-03-31 1919-04-20 1920-04-04
         1921-03-27 1922-04-16 1923-04-01 1924-04-20 1925-04-12 1926-04-04
         1927-04-17 1928-04-08 1929-03-31 1930-04-20 1931-04-05 1932-03-27|;
+
+plan(tests => 3 + @non_inclusive_expect + @inclusive_expect);
 
 my $easter_1901 = DateTime->new(
         year  => 1901,
