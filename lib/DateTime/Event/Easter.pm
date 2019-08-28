@@ -230,32 +230,46 @@ sub as_old_set {
     return DateTime::Set->from_datetimes( dates => [ $self->as_list(@_) ] );
 }
 sub as_set {
-        my $self = shift;
-        my %args = @_;
+        my $self   = shift;
+        my %args   = @_;
+        my %args_1 = @_;
         if (exists $args{inclusive}) {
-                croak("You must specify both a 'from' and a 'to' datetime")
-                          unless ref($args{to})   =~ /DateTime/
-                          and    ref($args{from}) =~ /DateTime/;
-                if ($args{inclusive}) {
-                        $args{start}  = delete $args{from};
-                        $args{end}    = delete $args{to};
-                } else {
-                        $args{after}  = delete $args{from};
-                        $args{before} = delete $args{to};
-                }
-                delete $args{inclusive};
-        } elsif (exists $args{from} or exists $args{to}) {
-                croak("You must specify both a 'from' and a 'to' datetime")
-                          unless ref($args{to})   =~ /DateTime/
-                          and    ref($args{from}) =~ /DateTime/;
-                        $args{after}  = delete $args{from};
-                        $args{before} = delete $args{to};
+          croak("You must specify both a 'from' and a 'to' datetime")
+                    unless ref($args{to})   =~ /DateTime/
+                    and    ref($args{from}) =~ /DateTime/;
+          if ($self->{as} eq 'point') {
+            if ($args{inclusive}) {
+                    $args{start}  = delete $args{from};
+                    $args{end}    = delete $args{to};
+            } else {
+                    $args{after}  = delete $args{from};
+                    $args{before} = delete $args{to};
+            }
+            delete $args{inclusive};
+          }
         }
-        return DateTime::Set->from_recurrence( 
-                next      => sub { return $_[0] if $_[0]->is_infinite; $self->following( $_[0] ) },
-                previous  => sub { return $_[0] if $_[0]->is_infinite; $self->previous(  $_[0] ) },
-                %args
-        );
+        elsif (exists $args{from} or exists $args{to}) {
+          croak("You must specify both a 'from' and a 'to' datetime")
+                     unless ref($args{to})   =~ /DateTime/
+                     and    ref($args{from}) =~ /DateTime/;
+          if ($self->{as} eq 'point') {
+            $args{after}  = delete $args{from};
+            $args{before} = delete $args{to};
+          }
+        }
+        if ($self->{as} eq 'span') {
+          $args_1{from} = delete $args_1{after}  if exists $args_1{after};
+          $args_1{to}   = delete $args_1{before} if exists $args_1{before};
+          my @list = $self->as_list(%args_1);
+          return DateTime::SpanSet->from_spans( spans => [ @list ] ); 
+        }
+        else {
+          return DateTime::Set->from_recurrence( 
+                  next      => sub { return $_[0] if $_[0]->is_infinite; $self->following( $_[0] ) },
+                  previous  => sub { return $_[0] if $_[0]->is_infinite; $self->previous(  $_[0] ) },
+                  %args
+                  );
+        }
 }
 
 sub as_span {

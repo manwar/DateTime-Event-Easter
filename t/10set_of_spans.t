@@ -32,69 +32,77 @@ use Test::More;
 
 use DateTime::Event::Easter qw/easter/;
 
-plan(tests => 1);
+my @non_inclusive_expect = qw|1902-03-30 1903-04-12 1904-04-03
+        1905-04-23 1906-04-15 1907-03-31 1908-04-19 1909-04-11 1910-03-27
+        1911-04-16 1912-04-07 1913-03-23 1914-04-12 1915-04-04 1916-04-23|;
 
-my $begin = DateTime->new( year  => 2018, month => 8, day   => 28);
-my $end   = DateTime->new( year  => 2020, month => 8, day   => 28);
+my @inclusive_expect     = qw|1917-04-08 1918-03-31 1919-04-20 1920-04-04
+        1921-03-27 1922-04-16 1923-04-01 1924-04-20 1925-04-12 1926-04-04
+        1927-04-17 1928-04-08 1929-03-31 1930-04-20 1931-04-05 1932-03-27|;
 
-my $just_before_2019 = DateTime->new(
-	year => 2019, month  => 4,  day    => 20,
-	hour => 23,   minute => 59, second => 59, nanosecond => 999999999
-);
-my $just_after_2019 = DateTime->new(
-	year => 2019, month  => 4,  day    => 22,
-	hour => 0,    minute => 0,  second => 0,  nanosecond => 1
-);
-my $just_before_2020 = DateTime->new(
-	year => 2020, month  => 4,  day    => 11,
-	hour => 23,   minute => 59, second => 59, nanosecond => 999999999
-);
-my $just_after_2020 = DateTime->new(
-	year => 2020, month  => 4,  day    => 13,
-	hour => 0,    minute => 0,  second => 0,  nanosecond => 1
+plan(tests => 3 + @non_inclusive_expect + @inclusive_expect);
+
+my $easter_1901 = DateTime->new(
+        year  => 1901,
+        month => 4,
+        day   => 7,
 );
 
-my $event_easter_sunday = DateTime::Event::Easter->new(
-	day => 'easter sunday',
-	as  => 'span',
+my $easter_1917 = DateTime->new(
+        year  => 1917,
+        month =>    4,
+        day   =>    8,
 );
 
-my $set = $event_easter_sunday->as_set(from => $begin, to => $end);
-
-ok(1); # For the moment, just make sure it does not crash.
-
-__END__
-
-my $span_easter_sunday = $event_easter_sunday->previous($post_easter_2003);
-
-is( $span_easter_sunday->min->datetime, 
-	'2003-04-20T00:00:00', 
-	"Easter Sunday span starts at midnight",
+my $easter_1932 = DateTime->new(
+        year  => 1932,
+        month =>    3,
+        day   =>   27,
 );
 
-is( $span_easter_sunday->max->datetime, 
-	'2003-04-21T00:00:00', 
-	"Easter Sunday span end at following midnight",
-);
+my $event_easter_sunday = DateTime::Event::Easter->new(as => 'span');
 
-is( $span_easter_sunday->contains( $just_before ), 
-	0,
-	"Previous dates are not included",
-);
+my $non_inclusive_set = $event_easter_sunday->as_set(from => $easter_1901, to => $easter_1917);
+my $inclusive_set     = $event_easter_sunday->as_set(from => $easter_1917, to => $easter_1932, inclusive => 1);
 
-is( $span_easter_sunday->contains( $just_after ), 
-	0,
-	"Following dates are not included",
-);
+# Check new set integration functionality:
 
-$event_easter_sunday->as_point();
+my $non_inclusive_new_set = $event_easter_sunday->as_set(after => $easter_1901, before => $easter_1917);
+my $empty_set = $non_inclusive_set->complement($non_inclusive_new_set);
+ok ($empty_set->is_empty_set, "Full DateTime::Set integration: Matching Sets");
 
-$span_easter_sunday = $event_easter_sunday->previous($post_easter_2003);
-ok(   $span_easter_sunday->isa("DateTime"),       "Result is a DateTime object");
-ok( ! $span_easter_sunday->isa("DateTime::Span"), "Result is no longer a span");
 
-$event_easter_sunday->as_span();
+# Check the number of elements in the set
+my @ni_set = $non_inclusive_set->as_list();
+is ($#ni_set, $#non_inclusive_expect, "Non-inclusive: Correct number of results");
 
-$span_easter_sunday = $event_easter_sunday->previous($span_easter_sunday);
-ok( ! $span_easter_sunday->isa("DateTime"),       "Result is no longer a DateTime object");
-ok(   $span_easter_sunday->isa("DateTime::Span"), "Result is again a span");
+my $i = 0;
+my $non_inclusive_interator = $non_inclusive_set->iterator;
+while ( my $span = $non_inclusive_interator->next ) {
+
+  my ($yyyy, $mm, $dd) = $non_inclusive_expect[$i] =~ /^(\d{4})-(\d\d)-(\d\d)$/;
+  my $dt = DateTime->new(year => $yyyy, month => $mm, day => $dd);
+
+  ok( $span->contains($dt),
+      "Correct date: $non_inclusive_expect[$i]"
+  );
+  $i++;
+
+};
+
+my @i_set = $inclusive_set->as_list();
+is ($#i_set, $#inclusive_expect, "Inclusive: Correct number of results");
+$i = 0;
+my $inclusive_interator = $inclusive_set->iterator;
+while ( my $span = $inclusive_interator->next ) {
+
+  my ($yyyy, $mm, $dd) = $inclusive_expect[$i] =~ /^(\d{4})-(\d\d)-(\d\d)$/;
+  my $dt = DateTime->new(year => $yyyy, month => $mm, day => $dd);
+
+  ok( $span->contains($dt),
+      "Correct date: $inclusive_expect[$i]"
+  );
+  $i++;
+
+};
+
