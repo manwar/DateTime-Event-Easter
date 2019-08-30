@@ -64,6 +64,9 @@ sub new {
         $offset = -3;
     } elsif ($args{day} =~ /^\-?\d+$/i) {
         $offset = $args{day};
+        if ($offset < -80 || $offset > 250) {
+          croak "The number of days must be between -80 and 250";
+        }
     } else {
         $offset = 0;
     }
@@ -456,6 +459,7 @@ When constructed with a day parameter, the method can return associated
 Easter days other than Easter Sunday. The constructor also allows an
 integer to be passed here as an offset. For example, Maundy Thursday is
 the same as an offset of -3 (Three days before Easter Sunday)
+The numeric offset must be in the -80 .. +250 interval.
 
 When constructed without a day parameter, the method uses the date for
 Easter Sunday (which is the churches' official day for 'Easter', think
@@ -564,11 +568,21 @@ Western Easter Sunday in that year.
 
 =over 4
 
-=item * https://github.com/houseabsolute/DateTime.pm/wiki - The official wiki
+=item * L<https://github.com/houseabsolute/DateTime.pm/wiki> - The official wiki
 of the DateTime project
 
-=item * https://www.tondering.dk/claus/calendar.html - Claus Tøndering's
+=item * L<https://www.tondering.dk/claus/calendar.html> - Claus Tøndering's
 calendar FAQ
+
+=item * I<Calendrical Calculations> (Third or Fourth Edition) by Nachum Dershowitz and
+Edward M. Reingold, Cambridge University Press, see
+L<http://www.calendarists.com>
+or L<https://www.cambridge.org/us/academic/subjects/computer-science/computing-general-interest/calendrical-calculations-ultimate-edition-4th-edition?format=PB&isbn=9781107683167>,
+ISBN 978-0-521-70238-6 for the third edition.
+
+=item * I<La saga des calendriers>, by Jean Lefort, published by I<Pour la Science>, ISBN 2-90929-003-5
+
+=item * I<Le Calendrier>, by Paul Couderc, published by I<Presses universitaires de France> (I<Que sais-je ?>), ISBN 2-13-036266-4
 
 =back
 
@@ -631,6 +645,8 @@ write to the Free Software Foundation, Inc., L<https://fsf.org>.
 
 =head2 SEE ALSO
 
-L<DateTime>, L<DateTime::Calendar::Julian>, perl(1),
+L<DateTime>, L<DateTime::Calendar::Julian>, perl(1)
+
+L<https://metacpan.org/search?q=easter> which gives L<Date::Easter>, L<Date::Calc> and L<Date::Pcalc>
 
 https://github.com/houseabsolute/DateTime.pm/wiki

@@ -19,4 +19,5 @@ t/09list_of_spans.t
 t/10set_of_spans.t 
 t/11list_of_spans_eastern.t
 t/12set_of_spans_eastern.t
+t/13extrema.t
 eg/rome_1944
