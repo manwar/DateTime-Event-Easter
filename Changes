@@ -129,3 +129,5 @@ Note on version conventions:
         - Allow building a list of spans or a set of spans
         - Documentation fixes
         - Kwalitee issues: META.yml should include a "provide" entry and a "resource" entry
+
+1.07 xxx yyyy-mm-dd

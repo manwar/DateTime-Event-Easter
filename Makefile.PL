@@ -53,7 +53,7 @@ WriteMakefile(
        provides       => {
            'DateTime::Event::Easter' => {
                 file => 'lib/DateTime/Event/Easter.pm',
-                version => '1.06',
+                version => '1.07',
            },
        },
        'meta-spec' => { version => 2 },
