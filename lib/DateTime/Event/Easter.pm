@@ -387,8 +387,8 @@ DateTime::Event::Easter - Returns Easter events for DateTime objects
                         day    =>   30,
                       );
   
-  $set  = $palm_sunday->as_set (from=>$dt, to=>$dt2, inclusive=>1);
-  @list = $palm_sunday->as_list(from=>$dt, to=>$dt2, inclusive=>1);
+  $set  = $palm_sunday->as_set (from => $dt, to => $dt2, inclusive => 1);
+  @list = $palm_sunday->as_list(from => $dt, to => $dt2, inclusive => 1);
   # Sun, 13 Apr 2003 00:00:00 UTC
   # Sun, 04 Apr 2004 00:00:00 UTC
   # Sun, 20 Mar 2005 00:00:00 UTC
@@ -510,7 +510,7 @@ will return midnight of $dt if $dt is the Easter Event.
 Return positive (1) if $dt is the Easter Event, otherwise returns false
 (0)
 
-=item * as_list(from => $dt, to => $dt2, inclusive=>I<([0]|1)>)
+=item * as_list(from => $dt, to => $dt2, inclusive => I<([0]|1)>)
 
 Returns a list of Easter Events between I<to> and I<from>.
 
@@ -562,7 +562,9 @@ Western Easter Sunday in that year.
 
 =back
 
-=head1 BUGS AND PROBLEMS
+=head1 BUGS AND PROBLEMS FOR SPANS
+
+=head2 Inclusion and exclusion of <from> and C<to> dates in lists and sets
 
 If you build a list or a set of spans and if the C<from> or C<to> limits
 coincide with the requested Easter event, the result may be different
@@ -599,6 +601,10 @@ Remarks and patches welcome.
 
 Note for pedants: the hour C<21:43:01> should actually be
 21 hours, 43 minutes, zero seconds and 1 nanosecond.
+Likewise, all the times above ending with C<:59> include
+999_999_999 nanoseconds.
+
+=head2 Interaction of spans with timezones
 
 It may happen that Palm sunday or Easter sunday coincide
 with DST "spring forward" day (for Northern countries). I have not
@@ -606,6 +612,15 @@ checked what happens in this case for spans: a bit more than one day
 for exactly 24 hours or exactly one day which gives 23 hours?
 A similar question exists for DST "fall backward" day in the Southern
 countries.
+
+Also, since you can use a numeric C<day> offset up to 250, you can reach
+the Northern "fall backwards" and the Southern "spring forward" days, where
+the same problem will happen in reverse.
+
+=head2 Building a spanset
+
+For the moment, when building a set with the C<< as => 'set' >> option,
+the C<from> and C<to> dates are required and thus the set must be a finite set.
 
 =head1 THE SMALL PRINT
 
