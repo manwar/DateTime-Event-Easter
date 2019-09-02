@@ -124,3 +124,8 @@ Note on version conventions:
         - Improve code coverage.
         - Add a directory "eg" with an example script.
 
+1.06 Mon 2019-09-02
+        - Conversion to UTF-8 (especially for the end-of-module value)
+        - Allow building a list of spans or a set of spans
+        - Documentation fixes
+        - Kwalitee issues: META.yml should include a "provide" entry and a "resource" entry
