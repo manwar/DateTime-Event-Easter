@@ -24,7 +24,7 @@ require Exporter;
 @ISA = qw(Exporter);
 
 @EXPORT_OK = qw(easter);
-$VERSION = '1.05';
+$VERSION = '1.06';
 
 sub new {
     my $class = shift;

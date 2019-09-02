@@ -37,10 +37,32 @@ WriteMakefile(
     PREREQ_PM => {
                     'DateTime'         => 0.16,
                     'DateTime::Set'    => 0.08,
+                    'strict'           => 0,
+                    'warnings'         => 0,
                     'Carp'             => 0,
                     'Params::Validate' => 0,
                     'DateTime::Calendar::Julian' => 0,
                  },
     'LICENSE'           => 'perl',
     'MIN_PERL_VERSION' => '5.6.1',
+    BUILD_REQUIRES => { 'Test::More'         => '0',        # should be 'TEST_REQUIRES', except that ExtUtils::MakeMaker 6.5705 does not accept it
+                        'ExtUtils::MakeMaker' => '6.57_02', # the first version to accept several authors in an arrayref
+                           },
+    META_MERGE       => {
+       dynamic_config => 0,
+       provides       => {
+           'DateTime::Event::Easter' => {
+                file => 'lib/DateTime/Event/Easter.pm',
+                version => '1.06',
+           },
+       },
+       'meta-spec' => { version => 2 },
+       resources => {
+           repository => {
+               type => 'git',
+               url  => 'https://github.com/jforget/DateTime-Event-Easter.git',
+               web  => 'https://github.com/jforget/DateTime-Event-Easter',
+           },
+       },
+    },
 );
