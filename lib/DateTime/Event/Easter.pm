@@ -562,6 +562,51 @@ Western Easter Sunday in that year.
 
 =back
 
+=head1 BUGS AND PROBLEMS
+
+If you build a list or a set of spans and if the C<from> or C<to> limits
+coincide with the requested Easter event, the result may be different
+from what you expect. For example, you ask for Easter sundays between
+2017-04-16T21:43:00 and 2020-04-12T12:34:00.
+
+The inclusive list or set will be:
+
+  2017-04-16T00:00:00 to 2017-04-16T23:59:59
+  2018-04-01T00:00:00 to 2018-04-01T23:59:59
+  2019-04-21T00:00:00 to 2019-04-21T23:59:59
+  2020-04-12T00:00:00 to 2020-04-12T23:59:59
+
+and not:
+
+  2017-04-16T21:43:00 to 2017-04-16T23:59:59
+  2018-04-01T00:00:00 to 2018-04-01T23:59:59
+  2019-04-21T00:00:00 to 2019-04-21T23:59:59
+  2020-04-12T00:00:00 to 2020-04-12T12:34:00
+
+The exclusive list or set will be:
+
+  2018-04-01T00:00:00 to 2018-04-01T23:59:59
+  2019-04-21T00:00:00 to 2019-04-21T23:59:59
+
+and not:
+
+  2017-04-16T21:43:01 to 2017-04-16T23:59:59
+  2018-04-01T00:00:00 to 2018-04-01T23:59:59
+  2019-04-21T00:00:00 to 2019-04-21T23:59:59
+  2020-04-12T00:00:00 to 2020-04-12T12:35:59
+
+Remarks and patches welcome.
+
+Note for pedants: the hour C<21:43:01> should actually be
+21 hours, 43 minutes, zero seconds and 1 nanosecond.
+
+It may happen that Palm sunday or Easter sunday coincide
+with DST "spring forward" day (for Northern countries). I have not
+checked what happens in this case for spans: a bit more than one day
+for exactly 24 hours or exactly one day which gives 23 hours?
+A similar question exists for DST "fall backward" day in the Southern
+countries.
+
 =head1 THE SMALL PRINT
 
 =head2 REFERENCES
