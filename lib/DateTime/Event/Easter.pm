@@ -641,9 +641,11 @@ L<http://www.calendarists.com>
 or L<https://www.cambridge.org/us/academic/subjects/computer-science/computing-general-interest/calendrical-calculations-ultimate-edition-4th-edition?format=PB&isbn=9781107683167>,
 ISBN 978-0-521-70238-6 for the third edition.
 
-=item * I<La saga des calendriers>, by Jean Lefort, published by I<Pour la Science>, ISBN 2-90929-003-5
+=item * I<La saga des calendriers>, by Jean Lefort, published by I<Belin> (I<Pour la Science>), ISBN 2-90929-003-5
+See L<https://www.belin-editeur.com/la-saga-des-calendriers>
 
 =item * I<Le Calendrier>, by Paul Couderc, published by I<Presses universitaires de France> (I<Que sais-je ?>), ISBN 2-13-036266-4
+See L<https://catalogue.bnf.fr/ark:/12148/cb329699661>.
 
 =back
 
@@ -651,8 +653,13 @@ ISBN 978-0-521-70238-6 for the third edition.
 
 Support for this module, and for all DateTime modules will be given
 through the DateTime mailing list - datetime@perl.org.
+See L<https://lists.perl.org/list/datetime.html>.
 
-Bugs should be reported through rt.cpan.org.
+Bugs should be reported through rt.cpan.org. See
+L<https://rt.cpan.org/Public/Dist/Display.html?Name=DateTime-Event-Easter>.
+
+Or you can try to submit a pull request to
+L<https://github.com/jforget/DateTime-Event-Easter>.
 
 =head2 AUTHOR
 
