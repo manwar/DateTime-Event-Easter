@@ -139,18 +139,18 @@ sub previous {
 
 sub closest {
     my $self = shift;
-    my $dt = shift;
+    my $dt   = shift;
 
     my $class = ref($dt);
     if ($class ne 'DateTime') {
-        croak ("Dates need to be datetime objects") unless ($dt->can('utc_rd_values'));
-        $dt = DateTime->from_object(object=>$dt);
+      croak ("Dates need to be datetime objects") unless ($dt->can('utc_rd_values'));
+      $dt = DateTime->from_object(object => $dt);
     }
 
     if ($self->is($dt)) {
-                my $easter = $dt->clone->truncate(to=>'day');
-            $easter = $class->from_object(object=>$easter) if (ref($easter) ne $class);
-                return ($self->{as} eq 'span') 
+      my $easter = $dt->clone->truncate(to=>'day');
+      $easter    = $class->from_object(object=>$easter) if (ref($easter) ne $class);
+      return ($self->{as} eq 'span') 
                         ? _tospan($easter)
                         : $easter;
     }
@@ -395,7 +395,7 @@ DateTime::Event::Easter - Returns Easter events for DateTime objects
   # Sun, 09 Apr 2006 00:00:00 UTC
   
   $datetime_set = $palm_sunday->as_set;
-  # A set of every Palm Sunday ever. See C<DateTime::Set> for more information.
+  # A set of every Palm Sunday ever. See DateTime::Set for more information.
 
 =head1 DESCRIPTION
 
@@ -409,7 +409,6 @@ Thursday, Good Friday, Black Saturday, Easter Sunday, Ascension,
 Pentecost and Trinity Sunday. If that's not enough, the module will
 also accept an offset so you can get the date for Quasimodo (the next
 sunday after Easter Sunday) by passing 7.
-
 
 =head1 BACKGROUND
 
@@ -428,7 +427,9 @@ churches.
 
 =head1 CONSTRUCTOR
 
-This class accepts the following options to its 'new' constructor:
+=head2 C<new> constructor
+
+This class accepts the following options to its C<new> constructor:
 
 =over 4
 
@@ -481,9 +482,9 @@ methods below>
 
 =head1 METHODS
 
-For all these methods, unless otherwise noted, $dt is a plain vanila
+For all these methods, unless otherwise noted, C<$dt> is a plain vanilla
 DateTime object or a DateTime object from any DateTime::Calendar module
-that can handle calls to from_object and utc_rd_values (which should be
+that can handle calls to C<from_object> and C<utc_rd_values> (which should be
 all of them, but there's nothing stopping someone making a bad egg).
 
 This class offers the following methods.
@@ -492,22 +493,22 @@ This class offers the following methods.
 
 =item * following($dt)
 
-Returns the DateTime object for the Easter Event after $dt. This will
-not return $dt.
+Returns the DateTime object for the Easter Event after C<$dt>. This will
+not return C<$dt>.
 
 =item * previous($dt)
 
-Returns the DateTime object for the Easter Event before $dt. This will
-not return $dt.
+Returns the DateTime object for the Easter Event before C<$dt>. This will
+not return C<$dt>.
 
 =item * closest($dt)
 
-Returns the DateTime object for the Easter Event closest to $dt. This
-will return midnight of $dt if $dt is the Easter Event.
+Returns the DateTime object for the Easter Event closest to C<$dt>. This
+will return midnight of C<$dt> if C<$dt> is the Easter Event.
 
 =item * is($dt)
 
-Return positive (1) if $dt is the Easter Event, otherwise returns false
+Return positive (1) if C<$dt> is the Easter Event, otherwise returns false
 (0)
 
 =item * as_list(from => $dt, to => $dt2, inclusive => I<([0]|1)>)
@@ -564,7 +565,7 @@ Western Easter Sunday in that year.
 
 =head1 BUGS AND PROBLEMS FOR SPANS
 
-=head2 Inclusion and exclusion of <from> and C<to> dates in lists and sets
+=head2 Inclusion and exclusion of C<from> and C<to> dates in lists and sets
 
 If you build a list or a set of spans and if the C<from> or C<to> limits
 coincide with the requested Easter event, the result may be different
@@ -709,4 +710,4 @@ L<DateTime>, L<DateTime::Calendar::Julian>, perl(1)
 
 L<https://metacpan.org/search?q=easter> which gives L<Date::Easter>, L<Date::Calc> and L<Date::Pcalc>
 
-https://github.com/houseabsolute/DateTime.pm/wiki
+L<https://github.com/houseabsolute/DateTime.pm/wiki>

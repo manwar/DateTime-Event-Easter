@@ -131,3 +131,4 @@ Note on version conventions:
         - Kwalitee issues: META.yml should include a "provide" entry and a "resource" entry
 
 1.07 xxx yyyy-mm-dd
+        - Fixed POD issues and improve code formatting
