@@ -57,6 +57,13 @@ WriteMakefile(
            },
        },
        'meta-spec' => { version => 2 },
+       prereqs => {
+         test => {
+           recommends => {
+             'Test::Fatal'                      => '0',
+           },
+         },
+       },
        resources => {
            repository => {
                type => 'git',
