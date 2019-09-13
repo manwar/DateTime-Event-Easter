@@ -66,7 +66,7 @@ like( exception { $east->is       ("2019-01-01"); } , qr/Dates need to be dateti
 
 my $d1 = DateTime->new(year => 2019, month =>  1, day =>  1);
 my $d9 = DateTime->new(year => 2019, month => 12, day => 31);
-like( exception { $west->as_set(                      to   => $d9       ); } , qr/You must specify both a 'from' and a 'to' datetime/ , "Missing begin date" );
+like( exception { $west->as_set(                      to => $d9         ); } , qr/You must specify both a 'from' and a 'to' datetime/ , "Missing begin date" );
 like( exception { $west->as_set(from => $d1                             ); } , qr/You must specify both a 'from' and a 'to' datetime/ , "Missing end date" );
-like( exception { $west->as_set(from => '2019-01-01', to => '2019-12-31'); } , qr/You must specify both a 'from' and a 'to' datetime/ , "Wrong begin date" );
+like( exception { $west->as_set(from => '2019-01-01', to => $d9         ); } , qr/You must specify both a 'from' and a 'to' datetime/ , "Wrong begin date" );
 like( exception { $west->as_set(from => $d1,          to => '2019-12-31'); } , qr/You must specify both a 'from' and a 'to' datetime/ , "Wrong end date" );
