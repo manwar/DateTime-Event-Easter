@@ -87,15 +87,15 @@ sub new {
 
 
 sub following {
-    my $self = shift;
-    my $dt = shift;
+  my $self = shift;
+  my $dt   = shift;
+  croak ("Dates need to be datetime objects")
+    unless $dt->can('utc_rd_values');
 
     my $class = ref($dt);
     if ($self->{easter} eq 'eastern' && $class ne 'DateTime::Calendar::Julian') {
-        croak ("Dates need to be datetime objects") unless ($dt->can('utc_rd_values'));
         $dt = DateTime::Calendar::Julian->from_object(object=>$dt);
     } elsif ($class ne 'DateTime') {
-        croak ("Dates need to be datetime objects") unless ($dt->can('utc_rd_values'));
         $dt = DateTime->from_object(object=>$dt);
     }
 
@@ -112,15 +112,15 @@ sub following {
 }
 
 sub previous {
-    my $self = shift;
-    my $dt = shift;
+  my $self = shift;
+  my $dt   = shift;
+  croak ("Dates need to be datetime objects")
+    unless $dt->can('utc_rd_values');
    
     my $class = ref($dt);
     if ($self->{easter} eq 'eastern' && $class ne 'DateTime::Calendar::Julian') {
-        croak ("Dates need to be datetime objects") unless ($dt->can('utc_rd_values'));
         $dt = DateTime::Calendar::Julian->from_object(object=>$dt);
     } elsif ($class ne 'DateTime') {
-        croak ("Dates need to be datetime objects") unless ($dt->can('utc_rd_values'));
         $dt = DateTime->from_object(object=>$dt);
     }
 
@@ -138,12 +138,13 @@ sub previous {
 }
 
 sub closest {
-    my $self = shift;
-    my $dt   = shift;
+  my $self = shift;
+  my $dt   = shift;
+  croak ("Dates need to be datetime objects")
+    unless $dt->can('utc_rd_values');
 
     my $class = ref($dt);
     if ($class ne 'DateTime') {
-      croak ("Dates need to be datetime objects") unless ($dt->can('utc_rd_values'));
       $dt = DateTime->from_object(object => $dt);
     }
 
@@ -168,12 +169,13 @@ sub closest {
 }
 
 sub is {
-    my $self = shift;
-    my $dt = shift;
+  my $self = shift;
+  my $dt   = shift;
+  croak ("Dates need to be datetime objects")
+    unless $dt->can('utc_rd_values');
 
     my $class = ref($dt);
     if ($class ne 'DateTime') {
-        croak ("Dates need to be datetime objects") unless ($dt->can('utc_rd_values'));
         $dt = DateTime->from_object(object=>$dt);
     }
 

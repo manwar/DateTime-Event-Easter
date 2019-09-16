@@ -40,7 +40,7 @@ BEGIN {
   }
 }
 
-plan tests => 21;
+plan tests => 25;
 
 like( exception { DateTime::Event::Easter->new(day =>  -81); } , qr/The number of days must be between -80 and 250/ , "Delay must be >= -80" );
 like( exception { DateTime::Event::Easter->new(day =>  251); } , qr/The number of days must be between -80 and 250/ , "Delay must be <= 250" );
@@ -70,3 +70,7 @@ like( exception { $west->as_set(                      to => $d9         ); } , q
 like( exception { $west->as_set(from => $d1                             ); } , qr/You must specify both a 'from' and a 'to' datetime/ , "Missing end date" );
 like( exception { $west->as_set(from => '2019-01-01', to => $d9         ); } , qr/You must specify both a 'from' and a 'to' datetime/ , "Wrong begin date" );
 like( exception { $west->as_set(from => $d1,          to => '2019-12-31'); } , qr/You must specify both a 'from' and a 'to' datetime/ , "Wrong end date" );
+like( exception { $west->as_set(                      to => $d9         , inclusive => 1); } , qr/You must specify both a 'from' and a 'to' datetime/ , "Missing begin date" );
+like( exception { $west->as_set(from => $d1                             , inclusive => 1); } , qr/You must specify both a 'from' and a 'to' datetime/ , "Missing end date" );
+like( exception { $west->as_set(from => '2019-01-01', to => $d9         , inclusive => 1); } , qr/You must specify both a 'from' and a 'to' datetime/ , "Wrong begin date" );
+like( exception { $west->as_set(from => $d1,          to => '2019-12-31', inclusive => 1); } , qr/You must specify both a 'from' and a 'to' datetime/ , "Wrong end date" );
