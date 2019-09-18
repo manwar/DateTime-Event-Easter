@@ -72,6 +72,7 @@ sub new {
     }
     $self{offset} = DateTime::Duration->new(days=>$offset);
     $self{easter} = lc $args{easter};
+    $self{day}    = $args{day};
    
     if ($self{easter} eq 'eastern') {
         require DateTime::Calendar::Julian;
@@ -85,12 +86,21 @@ sub new {
     
 }
 
-
 sub following {
-  my $self = shift;
-  my $dt   = shift;
+  my $self   = shift;
+  my $dt     = shift;
   croak ("Dates need to be datetime objects")
     unless $dt->can('utc_rd_values');
+  my $result = $self->_following_point($dt);
+  return ($self->{as} eq 'span') 
+      ? _tospan($result)
+      : $result;
+}
+
+
+sub _following_point {
+  my $self = shift;
+  my $dt   = shift;
 
     my $class = ref($dt);
     if ($self->{easter} eq 'eastern' && $class ne 'DateTime::Calendar::Julian') {
@@ -106,35 +116,40 @@ sub following {
         : $self->_easter($dt->year+1)+$self->{offset};
 
     $easter = $class->from_object(object=>$easter) if (ref($easter) ne $class);
-    return ($self->{as} eq 'span') 
-        ? _tospan($easter)
-        : $easter;
+  return $easter;
 }
 
 sub previous {
-  my $self = shift;
-  my $dt   = shift;
+  my $self   = shift;
+  my $dt     = shift;
   croak ("Dates need to be datetime objects")
     unless $dt->can('utc_rd_values');
-   
-    my $class = ref($dt);
-    if ($self->{easter} eq 'eastern' && $class ne 'DateTime::Calendar::Julian') {
-        $dt = DateTime::Calendar::Julian->from_object(object=>$dt);
-    } elsif ($class ne 'DateTime') {
-        $dt = DateTime->from_object(object=>$dt);
-    }
+  my $result = $self->_previous_point($dt);
+  return ($self->{as} eq 'span') 
+      ? _tospan($result)
+      : $result;
+}
 
-    my $easter_this_year = $self->_easter($dt->year)+$self->{offset};
+sub _previous_point {
+  my $self = shift;
+  my $dt   = shift;
 
-    my $easter = ($easter_this_year->ymd lt $dt->ymd)
-       ? $easter_this_year
-       : $self->_easter($dt->year-1)+$self->{offset};
+  my $class = ref($dt);
+  if ($self->{easter} eq 'eastern' && $class ne 'DateTime::Calendar::Julian') {
+      $dt = DateTime::Calendar::Julian->from_object(object=>$dt);
+  } elsif ($class ne 'DateTime') {
+      $dt = DateTime->from_object(object=>$dt);
+  }
+
+  my $easter_this_year = $self->_easter($dt->year)+$self->{offset};
+
+  my $easter = ($easter_this_year->ymd lt $dt->ymd)
+     ? $easter_this_year
+     : $self->_easter($dt->year-1)+$self->{offset};
 
 
-    $easter = $class->from_object(object=>$easter) if (ref($easter) ne $class);
-    return ($self->{as} eq 'span') 
-        ? _tospan($easter)
-        : $easter;
+  $easter = $class->from_object(object=>$easter) if (ref($easter) ne $class);
+  return $easter;
 }
 
 sub closest {
@@ -263,15 +278,20 @@ sub as_set {
           }
         }
         if ($self->{as} eq 'span') {
-          $args_1{from} = delete $args_1{after}  if exists $args_1{after};
-          $args_1{to}   = delete $args_1{before} if exists $args_1{before};
-          my @list = $self->as_list(%args_1);
-          return DateTime::SpanSet->from_spans( spans => [ @list ] ); 
+          # Should be ... // 'easter sunday', but that would lose the compatibility with 5.6.1 and 5.8.x
+          # Anyhow, the only problem occurs with a "day => 0" parameter and actually, "day => 0"
+          # and "day => 'easter sunday' are synonymous. So the problem is not a problem.
+          my $easter_point = DateTime::Event::Easter->new(day    => $self->{day}    || 'easter sunday'
+                                                        , easter => $self->{easter} || 'western'
+                                                        , as     => 'point');
+          my $set_of_points = $easter_point->as_set(%args_1);
+          $self->as_span();
+          return DateTime::SpanSet->from_set_and_duration(set => $set_of_points, hours => 24);
         }
         else {
           return DateTime::Set->from_recurrence( 
-                  next      => sub { return $_[0] if $_[0]->is_infinite; $self->following( $_[0] ) },
-                  previous  => sub { return $_[0] if $_[0]->is_infinite; $self->previous(  $_[0] ) },
+                  next      => sub { return $_[0] if $_[0]->is_infinite; $self->_following_point( $_[0] ) },
+                  previous  => sub { return $_[0] if $_[0]->is_infinite; $self->_previous_point(  $_[0] ) },
                   %args
                   );
         }
@@ -619,11 +639,6 @@ countries.
 Also, since you can use a numeric C<day> offset up to 250, you can reach
 the Northern "fall backwards" and the Southern "spring forward" days, where
 the same problem will happen in reverse.
-
-=head2 Building a spanset
-
-For the moment, when building a set with the C<< as => 'set' >> option,
-the C<from> and C<to> dates are required and thus the set must be a finite set.
 
 =head1 THE SMALL PRINT
 
