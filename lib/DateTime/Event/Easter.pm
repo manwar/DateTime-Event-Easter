@@ -83,7 +83,6 @@ sub new {
     $self{as} = lc $1;
 
     return bless \%self, $class;
-    
 }
 
 sub following {
@@ -96,7 +95,6 @@ sub following {
       ? _tospan($result)
       : $result;
 }
-
 
 sub _following_point {
   my $self = shift;
@@ -146,7 +144,6 @@ sub _previous_point {
   my $easter = ($easter_this_year->ymd lt $dt->ymd)
      ? $easter_this_year
      : $self->_easter($dt->year-1)+$self->{offset};
-
 
   $easter = $class->from_object(object=>$easter) if (ref($easter) ne $class);
   return $easter;
@@ -285,7 +282,6 @@ sub as_set {
                                                         , easter => $self->{easter} || 'western'
                                                         , as     => 'point');
           my $set_of_points = $easter_point->as_set(%args_1);
-          $self->as_span();
           return DateTime::SpanSet->from_set_and_duration(set => $set_of_points, hours => 24);
         }
         else {
@@ -571,16 +567,90 @@ chaining.
 
 =back
 
-=head1 EXPORTS
+=head1 SUBROUTINES
 
-This class does not export any methods by default, however the following
-exports are supported.
+The  module provides  a few  subroutines giving  the elements  used to
+compute the Easter date.
+
+These  elements can  be found  in various  sources, including  what is
+known in France as I<l'Almanach  du Facteur> (the postman's almanach).
+These values are printed at the bottom of the February frame, which is
+a  convenient way  to ensure  this frame  has the  same height  as the
+frames for 31-day months.
+
+These subroutines are not exported by default.
 
 =over 4
 
+=item * golden_number($year)
+
+Gives the position of  the year in the Metonic cycle.  This is a 1..19
+number.  We   do  not  use   the  0..18  arithmetic   modulo,  because
+traditionally, the Golden Number is in the 1..19 interval.
+
+This subroutine applies to both western and eastern computs.
+
+=item * western_epact($year)
+
+In the  Gregorian comput, the epact  is the age of  the ecclesiastical
+Moon on the 1st January of the  given year. The C<western> part of the
+subroutine  name  accounts for  the  fact  that Gregorian  and  Julian
+calendars do not use the same formula.
+
+The epact  is a 0..29 number.  The "0" value  is shown as "*"  in some
+sources. This  subroutine does not convert  "0" to "*", the  result is
+always a pure number.
+
+=item * eastern_epact($year)
+
+In the Julian comput, the epact  is the age of the ecclesiastical Moon
+on 22nd March. The C<eastern> part of the subroutine name accounts for
+the  fact that  Gregorian and  Julian calendars  do not  use the  same
+formula.
+
+The epact  is a 0..29 number.  The "0" value  is shown as "*"  in some
+sources. This  subroutine does not convert  "0" to "*", the  result is
+always a pure number.
+
+=item * sunday_letter($year)
+
+On normal years (that is, excluding  leap years), the Sunday letter is
+determined by tagging 1st January with  "A", 2nd January with "B", and
+so on and looking at the first sunday of the year. The letter found at
+this sunday if the sunday letter for the year.
+
+The  sunday   letter  governs  all   conversions  from  (mm,   dd)  to
+day-of-week. For example, if the letter is "F", then 1st January, 12th
+February, 2nd July and 1st  October, among others, are tuesdays, while
+6th January, 24th February, 14th July and 6th Ocotber are sundays.
+
+On  leap  years, there  are  two  sunday  letters.  The first  one  is
+determined  as above,  the second  one  is determined  by tagging  2nd
+January,  not 1st,  with  "A".  The first  sunday  letter governs  all
+conversions  from (mm,  dd) to  day-of-week for  January and  February
+only, while the second sunday letter governs the conversions from (mm,
+dd) to day-of-week for March and after.
+
+So, if the sunday letters are  "FE", 1st January and 12th February are
+still tuesdays,  but 2nd July and  1st October are wednesdays.  At the
+same time, 6th January and 24th February are still sundays, while 14th
+July and 6th October are mondays.
+
+This subroutine applies only to Gregorian years.
+
+=item * sunday_number($year)
+
+Letters  (standalone or  in pairs)  are not  convenient for  numerical
+calculations. So  the C<sunday_number>  subroutine is used  instead of
+C<sunday_letter>.
+
+In  case of  leap  years, the  C<sunday_number>  subroutine gives  the
+numerical value  for the  second sunday  letter, because  Easter never
+falls in January or February.
+
 =item * easter($year)
 
-Given a Gregorian year, this method will return a DateTime object for
+Given a Gregorian year, this method  will return a DateTime object for
 Western Easter Sunday in that year.
 
 =back
