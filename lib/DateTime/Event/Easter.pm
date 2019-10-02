@@ -322,39 +322,56 @@ sub _easter {
 }
 
 sub western_easter {
-    my $year = shift;
-    croak "Year value '$year' should be numeric." if $year!~/^\-?\d+$/;
+  my $year = shift;
+  croak "Year value '$year' should be numeric." if $year!~/^\-?\d+$/;
     
-    my $golden_number = $year % 19;
-    #quasicentury is so named because its a century, only its 
-    # the number of full centuries rather than the current century
-    my $quasicentury = int($year / 100);
-    my $epact = ($quasicentury - int($quasicentury/4) - int(($quasicentury * 8 + 13)/25) + ($golden_number*19) + 15) % 30;
-    my $interval = $epact - int($epact/28)*(1 - int(29/($epact+1)) * int((21 - $golden_number)/11) );
-    my $weekday = ($year + int($year/4) + $interval + 2 - $quasicentury + int($quasicentury/4)) % 7;
+  my $epact_1 = western_epact($year);
+  my $epact_2 = $epact_1;
+  {
+    no warnings 'numeric';
+    if (0 + $epact_1 == 24) {
+      # ajustement 24 → 25
+      $epact_2 = 25;
+    }
+    elsif ($epact_1 eq '25*') {
+      # ajustement 25* → 26
+      $epact_2 = 26;
+    }
+  }
+  if ($epact_2 > 24) {
+    $epact_2 -= 30;
+  }
+  my $day   = 45 - $epact_2 + ($epact_2 + western_sunday_number($year) + 1) % 7;
+  my $month = 3;
+  if ($day > 31) {
+    $day -= 31;
+    $month = 4;
+  }
     
-    my $offset = $interval - $weekday;
-    my $month = 3 + int(($offset+40)/44);
-    my $day = $offset + 28 - 31* int($month/4);
-    
-    return DateTime->new(year=>$year, month=>$month, day=>$day);
+  return DateTime->new(year=>$year, month=>$month, day=>$day);
 }
 *easter = \&western_easter; #alias so people can call 'easter($year)' externally
 
 sub eastern_easter {
-    my $year = shift;
-    croak "Year value '$year' should be numeric." if $year!~/^\-?\d+$/;
+  my $year = shift;
+  croak "Year value '$year' should be numeric." if $year!~/^\-?\d+$/;
     
-    my $golden_number = $year % 19;
+  my $epact_1 = eastern_epact($year);
+  my $epact_2;
 
-    my $interval = ($golden_number * 19 + 15) % 30;
-    my $weekday = ($year + int($year/4) + $interval) % 7;
-   
-    my $offset = $interval - $weekday;
-    my $month = 3 + int(($offset+40)/44);
-    my $day = $offset + 28 - 31* int($month/4);
+  $epact_2 = $epact_1;
+  if ($epact_2 >= 24) {
+    $epact_2 -= 30;
+  }
 
-    return DateTime::Calendar::Julian->new(year=>$year, month=>$month, day=>$day);
+  my $day   = 45 - $epact_2 + ($epact_2 + eastern_sunday_number($year) + 1) % 7;
+  my $month = 3;
+  if ($day > 31) {
+    $day -= 31;
+    $month = 4;
+  }
+
+  return DateTime::Calendar::Julian->new(year=>$year, month=>$month, day=>$day);
 }
 
 sub golden_number {
