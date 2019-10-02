@@ -30,7 +30,15 @@ use strict;
 use warnings;
 use Test::More;
 
-use DateTime::Event::Easter;
+use DateTime::Event::Easter qw/easter
+                               golden_number
+                               western_epact        
+                               western_sunday_letter
+                               western_sunday_number
+                               eastern_epact        
+                               eastern_sunday_letter
+                               eastern_sunday_number
+                              /;
 
 BEGIN {
   eval "use Test::Fatal qw/exception lives_ok/;";
@@ -40,7 +48,7 @@ BEGIN {
   }
 }
 
-plan tests => 25;
+plan tests => 33;
 
 like( exception { DateTime::Event::Easter->new(day =>  -81); } , qr/The number of days must be between -80 and 250/ , "Delay must be >= -80" );
 like( exception { DateTime::Event::Easter->new(day =>  251); } , qr/The number of days must be between -80 and 250/ , "Delay must be <= 250" );
@@ -74,3 +82,11 @@ like( exception { $west->as_set(                      to => $d9         , inclus
 like( exception { $west->as_set(from => $d1                             , inclusive => 1); } , qr/You must specify both a 'from' and a 'to' datetime/ , "Missing end date" );
 like( exception { $west->as_set(from => '2019-01-01', to => $d9         , inclusive => 1); } , qr/You must specify both a 'from' and a 'to' datetime/ , "Wrong begin date" );
 like( exception { $west->as_set(from => $d1,          to => '2019-12-31', inclusive => 1); } , qr/You must specify both a 'from' and a 'to' datetime/ , "Wrong end date" );
+like( exception { easter               ('a') } , qr/Year value '.*' should be numeric./ , "Wrong numeric argument to easter" ) ;
+like( exception { golden_number        ('a') } , qr/Year value '.*' should be numeric./ , "Wrong numeric argument to golden_number" ) ;
+like( exception { western_epact        ('a') } , qr/Year value '.*' should be numeric./ , "Wrong numeric argument to western_epact" ) ;
+like( exception { western_sunday_letter('a') } , qr/Year value '.*' should be numeric./ , "Wrong numeric argument to western_sunday_letter" ) ;
+like( exception { western_sunday_number('a') } , qr/Year value '.*' should be numeric./ , "Wrong numeric argument to western_sunday_number" ) ;
+like( exception { eastern_epact        ('a') } , qr/Year value '.*' should be numeric./ , "Wrong numeric argument to eastern_epact" ) ;
+like( exception { eastern_sunday_letter('a') } , qr/Year value '.*' should be numeric./ , "Wrong numeric argument to eastern_sunday_letter" ) ;
+like( exception { eastern_sunday_number('a') } , qr/Year value '.*' should be numeric./ , "Wrong numeric argument to eastern_sunday_number" ) ;

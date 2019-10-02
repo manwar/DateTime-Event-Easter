@@ -23,7 +23,8 @@ require Exporter;
 
 @ISA = qw(Exporter);
 
-@EXPORT_OK = qw(easter);
+@EXPORT_OK = qw(easter golden_number western_epact western_sunday_letter western_sunday_number
+                                     eastern_epact eastern_sunday_letter eastern_sunday_number);
 $VERSION = '1.07';
 
 sub new {
@@ -356,6 +357,90 @@ sub eastern_easter {
     return DateTime::Calendar::Julian->new(year=>$year, month=>$month, day=>$day);
 }
 
+sub golden_number {
+  my ($year) = @_;
+  croak "Year value '$year' should be numeric." if $year!~/^\-?\d+$/;
+  return $year % 19 + 1;
+}
+
+#
+# La saga des calendriers page 145 (and page 142)
+#
+sub western_epact {
+  my ($year) = @_;
+  croak "Year value '$year' should be numeric." if $year!~/^\-?\d+$/;
+  # centu is not the century, but nearly so
+  my $centu      = int($year / 100);
+  my $metemptose = $centu - int($centu / 4);
+  my $proemptose = int((8 * $centu + 13) / 25);
+  my $epact      = (11 * golden_number($year) - 3 - $metemptose + $proemptose) % 30;
+  if ($epact == 25 && golden_number($year) > 11) {
+    $epact = '25*';
+  }
+  return $epact;
+}
+
+#
+# La saga des calendriers page 146
+#
+sub western_sunday_letter {
+  my ($year) = @_;
+  croak "Year value '$year' should be numeric." if $year!~/^\-?\d+$/;
+  my $prec = $year - 1;
+  my $n1 = 7 - ($year + int($prec / 4) - int($prec / 100) + int($prec / 400) + 6) % 7;
+  my $n2 = 7 - ($year + int($year / 4) - int($year / 100) + int($year / 400) + 6) % 7;
+  my $ref = '#ABCDEFG';
+  my $c1  = substr($ref, $n1, 1);
+  my $c2  = substr($ref, $n2, 1);
+  if ($c1 eq $c2) {
+    return $c1;
+  }
+  else {
+    return "$c1$c2";
+  }
+}
+sub western_sunday_number {
+  my ($year) = @_;
+  croak "Year value '$year' should be numeric." if $year!~/^\-?\d+$/;
+  return 7 - ($year + int($year / 4) - int($year / 100) + int($year / 400) + 6) % 7;
+}
+
+#
+# La saga des calendriers page 138
+# Erratum for page 136 : for a golden number 19, epact is 26, not 6
+#
+sub eastern_epact {
+  my ($year) = @_;
+  croak "Year value '$year' should be numeric." if $year!~/^\-?\d+$/;
+  return (11 * golden_number($year) + 27) % 30;
+}
+
+#
+# La saga des calendriers pages 137-138
+#
+sub eastern_sunday_letter {
+  my ($year) = @_;
+  croak "Year value '$year' should be numeric." if $year!~/^\-?\d+$/;
+  my $prec = $year - 1;
+  my $n1 = 7 - ($year + int($prec / 4) - 3) % 7;
+  my $n2 = 7 - ($year + int($year / 4) - 3) % 7;
+  my $ref = '#ABCDEFG';
+  my $c1  = substr($ref, $n1, 1);
+  my $c2  = substr($ref, $n2, 1);
+  if ($c1 eq $c2) {
+    return $c1;
+  }
+  else {
+    return "$c1$c2";
+  }
+}
+sub eastern_sunday_number {
+  my ($year) = @_;
+  croak "Year value '$year' should be numeric." if $year!~/^\-?\d+$/;
+  return 7 - ($year + int($year / 4) - 3) % 7;
+}
+
+
 # Ending a module with an unspecified number, which could be zero, is wrong.
 # Therefore the custom of ending a module with a boring "1".
 # Instead of that, end it with some verse.
@@ -601,6 +686,15 @@ The epact  is a 0..29 number.  The "0" value  is shown as "*"  in some
 sources. This  subroutine does not convert  "0" to "*", the  result is
 always a pure number.
 
+Actually,  the western  epact  is  a little  more  than  a number.  As
+explained by Paul Couderc (page 86)  and Jean Lefort (page 142), there
+is a  special case for 25,  which should be considered  as two values,
+"basic 25" and "alternate 25". "Basic 25" is printed as a plain number
+C<25>, while "alternate 25" is printed  in a way that distinguishes it
+from the other  numbers. Jean Lefort mentions C<XXV>  or using italics
+or bold  digits, such as  B<C<25>>. This module prints  the "alternate
+25" as "C<25*>".
+
 =item * eastern_epact($year)
 
 In the Julian comput, the epact  is the age of the ecclesiastical Moon
@@ -610,9 +704,10 @@ formula.
 
 The epact  is a 0..29 number.  The "0" value  is shown as "*"  in some
 sources. This  subroutine does not convert  "0" to "*", the  result is
-always a pure number.
+always a pure  number. There is no  other special case, for  25 as for
+any other number.
 
-=item * sunday_letter($year)
+=item * western_sunday_letter($year), eastern_sunday_letter($year)
 
 On normal years (that is, excluding  leap years), the Sunday letter is
 determined by tagging 1st January with  "A", 2nd January with "B", and
@@ -622,7 +717,7 @@ this sunday if the sunday letter for the year.
 The  sunday   letter  governs  all   conversions  from  (mm,   dd)  to
 day-of-week. For example, if the letter is "F", then 1st January, 12th
 February, 2nd July and 1st  October, among others, are tuesdays, while
-6th January, 24th February, 14th July and 6th Ocotber are sundays.
+6th January, 24th February, 14th July and 6th October are sundays.
 
 On  leap  years, there  are  two  sunday  letters.  The first  one  is
 determined  as above,  the second  one  is determined  by tagging  2nd
@@ -636,16 +731,17 @@ still tuesdays,  but 2nd July and  1st October are wednesdays.  At the
 same time, 6th January and 24th February are still sundays, while 14th
 July and 6th October are mondays.
 
-This subroutine applies only to Gregorian years.
+C<western_sunday_letter>  applies  only   to  Gregorian  years,  while
+C<eastern_sunday_letter> applies only to Julian years.
 
-=item * sunday_number($year)
+=item * western_sunday_number($year), eastern_sunday_number($year)
 
 Letters  (standalone or  in pairs)  are not  convenient for  numerical
-calculations. So  the C<sunday_number>  subroutine is used  instead of
-C<sunday_letter>.
+calculations.  So  the   I<xxx>C<_sunday_number>  subroutine  is  used
+instead of I<xxx>C<_sunday_letter>.
 
-In  case of  leap  years, the  C<sunday_number>  subroutine gives  the
-numerical value  for the  second sunday  letter, because  Easter never
+In case  of leap  years, the I<xxx>C<_sunday_number>  subroutine gives
+the numerical value for the second sunday letter, because Easter never
 falls in January or February.
 
 =item * easter($year)
