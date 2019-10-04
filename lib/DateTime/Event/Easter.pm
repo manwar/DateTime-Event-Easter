@@ -65,9 +65,6 @@ sub new {
         $offset = -3;
     } elsif ($args{day} =~ /^\-?\d+$/i) {
         $offset = $args{day};
-        if ($offset < -80 || $offset > 250) {
-          croak "The number of days must be between -80 and 250";
-        }
     } else {
         $offset = 0;
     }
@@ -98,24 +95,50 @@ sub following {
 }
 
 sub _following_point {
-  my $self = shift;
-  my $dt   = shift;
+  my ($self, $event_start_dt) = @_;
 
-    my $class = ref($dt);
-    if ($self->{easter} eq 'eastern' && $class ne 'DateTime::Calendar::Julian') {
-        $dt = DateTime::Calendar::Julian->from_object(object=>$dt);
-    } elsif ($class ne 'DateTime') {
-        $dt = DateTime->from_object(object=>$dt);
-    }
+  # How does _following_point work with a long offset?
+  # 
+  # Let us suppose that the $self objet has an offset of 1000 days (about 2 years
+  # and 9 months) and the event starting point $event_start_dt is 2018-10-03.
+  # 
+  # The following point will be in late 2018 or early 2019, which corresponds to an
+  # Easter sunday in 2016. So we compute a starting point for Easter sunday by
+  # subtracting the offset from the event starting point. 2018-10-03 - 1000 days
+  # gives $easter_start_dt = 2016-01-07.
+  # 
+  # Next, we extract the year value and we compute the Easter sunday date.  This
+  # gives $easter_sunday = 2016-03-27.
+  # 
+  # Then we add back the offset, which gives the final result 2018-12-22.
+  # 
+  # Now, suppose that the event starting point $event_start_dt is 2019-09-01. The Easter sunday
+  # starting point $easter_start_dt is 2016-12-05.
+  # 
+  # Extracting the year value gives 2016, for an Easter sunday $easter_sunday = 2016-03-27, which is
+  # before the Easter starting point 2016-12-05. So we try the next year, 2017,
+  # for an Easter sunday $easter_sunday = 2017-04-16 and an event 1000 days later $event = 2020-01-11.
 
-    my $easter_this_year = $self->_easter($dt->year)+$self->{offset};
+  my $class = ref($event_start_dt);
+  if ($self->{easter} eq 'eastern' && ! $event_start_dt->isa('DateTime::Calendar::Julian')) {
+    $event_start_dt = DateTime::Calendar::Julian->from_object(object=>$event_start_dt);
+  }
+  elsif (! $event_start_dt->isa('DateTime')) {
+    $event_start_dt = DateTime->from_object(object=>$event_start_dt);
+  }
 
-    my $easter = ($easter_this_year > $dt) 
-        ? $easter_this_year
-        : $self->_easter($dt->year+1)+$self->{offset};
+  my $easter_start_dt = $event_start_dt - $self->{offset};
+  my $easter_sunday = $self->_easter($easter_start_dt->year);
+  if ($easter_sunday <= $easter_start_dt) {
+    # 2016-03-27 is no good for 2016-12-05, so let us switch to 2017-04-16
+    $easter_sunday = $self->_easter($easter_start_dt->year + 1);
+  }
 
-    $easter = $class->from_object(object=>$easter) if (ref($easter) ne $class);
-  return $easter;
+  my $event = $easter_sunday + $self->{offset};
+  print '$class ', $class, ", $event ", ref($event), "\n";
+
+  $event = $class->from_object(object => $event) if (ref($event) ne $class);
+  return $event;
 }
 
 sub previous {
@@ -130,24 +153,27 @@ sub previous {
 }
 
 sub _previous_point {
-  my $self = shift;
-  my $dt   = shift;
+  my ($self, $event_start_dt) = @_;
 
-  my $class = ref($dt);
-  if ($self->{easter} eq 'eastern' && $class ne 'DateTime::Calendar::Julian') {
-      $dt = DateTime::Calendar::Julian->from_object(object=>$dt);
-  } elsif ($class ne 'DateTime') {
-      $dt = DateTime->from_object(object=>$dt);
+  my $class = ref($event_start_dt);
+  if ($self->{easter} eq 'eastern' && ! $event_start_dt->isa('DateTime::Calendar::Julian')) {
+    $event_start_dt = DateTime::Calendar::Julian->from_object(object=>$event_start_dt);
+  }
+  elsif (! $event_start_dt->isa('DateTime')) {
+    $event_start_dt = DateTime->from_object(object=>$event_start_dt);
   }
 
-  my $easter_this_year = $self->_easter($dt->year)+$self->{offset};
+  my $easter_start_dt = $event_start_dt - $self->{offset};
+  my $easter_sunday = $self->_easter($easter_start_dt->year);
+  if ($easter_sunday >= $easter_start_dt) {
+    $easter_sunday = $self->_easter($easter_start_dt->year - 1);
+  }
 
-  my $easter = ($easter_this_year->ymd lt $dt->ymd)
-     ? $easter_this_year
-     : $self->_easter($dt->year-1)+$self->{offset};
+  my $event = $easter_sunday + $self->{offset};
 
-  $easter = $class->from_object(object=>$easter) if (ref($easter) ne $class);
-  return $easter;
+  print '$class ', $class, ', $event ', ref($event), ' ', $event, "\n";
+  $event = $class->from_object(object => $event) if (ref($event) ne $class);
+  return $event;
 }
 
 sub closest {

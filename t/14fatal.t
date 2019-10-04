@@ -48,10 +48,8 @@ BEGIN {
   }
 }
 
-plan tests => 33;
+plan tests => 31;
 
-like( exception { DateTime::Event::Easter->new(day =>  -81); } , qr/The number of days must be between -80 and 250/ , "Delay must be >= -80" );
-like( exception { DateTime::Event::Easter->new(day =>  251); } , qr/The number of days must be between -80 and 250/ , "Delay must be <= 250" );
 like( exception { DateTime::Event::Easter->new(as =>  'spin'); } , qr/Argument 'as' must be 'point' or 'span'./ , "Argument 'as' must be 'point' or 'span'." );
 
 lives_ok  { DateTime::Event::Easter->new(as =>  'point' ); } "Use the singular form 'point'";
