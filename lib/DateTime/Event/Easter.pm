@@ -127,10 +127,10 @@ sub _following_point {
 
   my $class = ref($event_start_dt);
   if ($self->{easter} eq 'eastern' && ! $event_start_dt->isa('DateTime::Calendar::Julian')) {
-    $event_start_dt = DateTime::Calendar::Julian->from_object(object=>$event_start_dt);
+    $event_start_dt = DateTime::Calendar::Julian->from_object(object => $event_start_dt);
   }
-  elsif (! $event_start_dt->isa('DateTime')) {
-    $event_start_dt = DateTime->from_object(object=>$event_start_dt);
+  elsif ($class ne 'DateTime') {
+    $event_start_dt = DateTime->from_object(object => $event_start_dt);
   }
 
   my $easter_start_dt = $event_start_dt - $self->{offset};
@@ -168,10 +168,10 @@ sub _previous_point {
 
   my $class = ref($event_start_dt);
   if ($self->{easter} eq 'eastern' && ! $event_start_dt->isa('DateTime::Calendar::Julian')) {
-    $event_start_dt = DateTime::Calendar::Julian->from_object(object=>$event_start_dt);
+    $event_start_dt = DateTime::Calendar::Julian->from_object(object => $event_start_dt);
   }
-  elsif (! $event_start_dt->isa('DateTime')) {
-    $event_start_dt = DateTime->from_object(object=>$event_start_dt);
+  elsif ($class ne 'DateTime') {
+    $event_start_dt = DateTime->from_object(object => $event_start_dt);
   }
 
   my $easter_start_dt = $event_start_dt - $self->{offset};
@@ -228,7 +228,7 @@ sub is {
     unless $dt->can('utc_rd_values');
 
   my $class = ref($dt);
-  if ($self->{easter} eq 'western' && ! $dt->isa('DateTime')) {
+  if ($self->{easter} eq 'western' && $class ne 'DateTime') {
     $dt = DateTime->from_object(object => $dt);
   }
   if ($self->{easter} eq 'eastern' && ! $dt->isa('DateTime::Calendar::Julian')) {

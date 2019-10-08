@@ -26,8 +26,10 @@
 #     along with this program; if not, write to the Free Software Foundation,
 #     Inc., <https://www.fsf.org/>.
 #
-# This test uses Eugene van der Pijll's data and remarks from
+# This test is based on Eugene van der Pijll's remarks from
 # https://www.nntp.perl.org/group/perl.datetime/2003/03/msg1437.html
+# but taking them in the other way:
+# computing the *Western* Easter with *Julian* dates.
 #
 
 use strict;
@@ -35,30 +37,23 @@ use warnings;
 use Test::More;
 
 use DateTime::Event::Easter;
+use DateTime::Calendar::Julian;
 
 my @list1 = qw/
-       34998-01-07
-       34998-12-23
-       34999-12-15
-       35001-01-04
-       35001-12-20
+           14399-01-02
+           14399-12-18
+           14401-01-06
+           14401-12-29
+           14402-12-14
+           14404-01-03
+           14404-12-25
        /;
-my @list2 = qw/
-       59996-06-16
-       59997-07-06
-       59998-06-28
-       59999-06-13
-       60000-07-02
-       60001-06-24
-       /;
-plan(tests => 2 * (@list1 + @list2));
+plan(tests => 2 * @list1);
 
 
-my $easter = DateTime::Event::Easter->new(easter => 'eastern');
-my $begin1 = DateTime->new(year => 34998, month => 1, day => 1);
-my $end1   = DateTime->new(year => 35002, month => 1, day => 1);
-my $begin2 = DateTime->new(year => 59996, month => 1, day => 1);
-my $end2   = DateTime->new(year => 60002, month => 1, day => 1);
+my $easter = DateTime::Event::Easter->new(easter => 'western');
+my $begin1 = DateTime::Calendar::Julian->new(year => 14398, month => 1, day => 1);
+my $end1   = DateTime::Calendar::Julian->new(year => 14405, month => 1, day => 1);
 
 sub checking {
   my ($ref_list, $begin, $end) = @_;
@@ -82,5 +77,4 @@ sub checking {
 }
 
 checking(\@list1, $begin1, $end1);
-checking(\@list2, $begin2, $end2);
 
