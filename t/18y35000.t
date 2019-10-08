@@ -36,14 +36,14 @@ use Test::More;
 
 use DateTime::Event::Easter;
 
-my @liste1 = qw/
+my @list1 = qw/
        34998-01-07
        34998-12-23
        34999-12-15
        35001-01-04
        35001-12-20
        /;
-my @liste2 = qw/
+my @list2 = qw/
        59996-06-16
        59997-07-06
        59998-06-28
@@ -51,27 +51,36 @@ my @liste2 = qw/
        60000-07-02
        60001-06-24
        /;
-plan(tests => @liste1 + @liste2);
+plan(tests => 2 * (@list1 + @list2));
 
 
-my $paques = DateTime::Event::Easter->new(easter => 'eastern');
-my $debut  = DateTime->new(year => 34998, month => 1, day => 1);
-my $fin    = DateTime->new(year => 35002, month => 1, day => 1);
-my @liste  = $paques->as_list(from => $debut, to => $fin);
+my $easter = DateTime::Event::Easter->new(easter => 'eastern');
+my $begin1 = DateTime->new(year => 34998, month => 1, day => 1);
+my $end1   = DateTime->new(year => 35002, month => 1, day => 1);
+my $begin2 = DateTime->new(year => 59996, month => 1, day => 1);
+my $end2   = DateTime->new(year => 60002, month => 1, day => 1);
 
-my $i = 0;
-for my $dt (@liste) {
-  is ($dt->ymd, $liste1[$i], "Easter on $liste1[$i]");
-  ++$i;
+sub checking {
+  my ($ref_list, $begin, $end) = @_;
+  my @list = @$ref_list;
+
+  # checking "following"
+  my $dt = $begin;
+  for my $i (0..$#list) {
+    my $dt1 = $easter->following($dt);
+    is ($dt1->ymd, $list[$i], "Following Easter on $list[$i]");
+    $dt = $dt1;
+  }
+
+  # checking "following"
+  my $dt = $end;
+  for my $i (reverse (0..$#list)) {
+    my $dt1 = $easter->previous($dt);
+    is ($dt1->ymd, $list[$i], "Previous Easter on $list[$i]");
+    $dt = $dt1;
+  }
 }
 
-$debut  = DateTime->new(year => 59996, month => 1, day => 1);
-$fin    = DateTime->new(year => 60002, month => 1, day => 1);
-@liste = $paques->as_list(from => $debut, to => $fin);
-
-$i = 0;
-for my $dt (@liste) {
-  is ($dt->ymd, $liste2[$i], "Easter on $liste2[$i]");
-  ++$i;
-}
+checking(\@list1, $begin1, $end1);
+checking(\@list2, $begin2, $end2);
 
