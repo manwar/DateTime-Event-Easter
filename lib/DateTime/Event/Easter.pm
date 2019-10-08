@@ -234,8 +234,8 @@ sub is {
   if ($self->{easter} eq 'eastern' && ! $dt->isa('DateTime::Calendar::Julian')) {
     $dt = DateTime::Calendar::Julian->from_object(object => $dt)   
   }
-  my $easter_start = $dt - $self->{offset};
 
+  my $easter_start     = $dt - $self->{offset};
   my $easter_this_year = $self->_easter($easter_start->year) + $self->{offset};
 
   return ($easter_this_year->ymd eq $dt->ymd) ? 1 : 0;
@@ -362,21 +362,18 @@ sub _easter {
 }
 
 sub western_easter {
-  my $year = shift;
+  my ($year) = @_;
   croak "Year value '$year' should be numeric." if $year!~/^\-?\d+$/;
     
   my $epact_1 = western_epact($year);
   my $epact_2 = $epact_1;
-  {
-    no warnings 'numeric';
-    if (0 + $epact_1 == 24) {
-      # ajustement 24 → 25
-      $epact_2 = 25;
-    }
-    elsif ($epact_1 eq '25*') {
-      # ajustement 25* → 26
-      $epact_2 = 26;
-    }
+  if ($epact_1 eq '25*') {
+    # ajustement 25* → 26
+    $epact_2 = 26;
+  }
+  elsif ($epact_1 == 24) {
+    # ajustement 24 → 25
+    $epact_2 = 25;
   }
   if ($epact_2 > 24) {
     $epact_2 -= 30;
@@ -384,11 +381,11 @@ sub western_easter {
   my $day   = 45 - $epact_2 + ($epact_2 + western_sunday_number($year) + 1) % 7;
   my $month = 3;
   if ($day > 31) {
-    $day -= 31;
+    $day  -= 31;
     $month = 4;
   }
     
-  return DateTime->new(year=>$year, month=>$month, day=>$day);
+  return DateTime->new(year => $year, month => $month, day => $day);
 }
 *easter = \&western_easter; #alias so people can call 'easter($year)' externally
 
