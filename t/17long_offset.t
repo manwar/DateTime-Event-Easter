@@ -33,7 +33,7 @@ use Test::More;
 
 use DateTime::Event::Easter;
 
-plan(tests => 4);
+plan(tests => 6);
 
 my $w_easter = DateTime::Event::Easter->new(day => 1000);
 my $ref1     = DateTime->new(year => 2019, month => 10, day => 3);
@@ -50,3 +50,6 @@ is ($event->ymd, "2018-12-22", "Event before 2019-10-03 is 2018-12-22");
 
 $event  = $w_easter->previous($ref2);
 is ($event->ymd, "2018-12-22", "Event before 2019-09-01 is 2018-12-22");
+
+ok ($w_easter->is(DateTime->new(year => 2020, month =>  1, day => 11)), "Checking that 2020-01-11 is Easter+1000");
+ok ($w_easter->is(DateTime->new(year => 2018, month => 12, day => 22)), "Checking that 2018-12-22 is Easter+1000");

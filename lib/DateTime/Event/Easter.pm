@@ -112,12 +112,18 @@ sub _following_point {
   # 
   # Then we add back the offset, which gives the final result 2018-12-22.
   # 
-  # Now, suppose that the event starting point $event_start_dt is 2019-09-01. The Easter sunday
-  # starting point $easter_start_dt is 2016-12-05.
+  # Now, suppose that the event starting point $event_start_dt is 2019-01-10. The Easter sunday
+  # starting point $easter_start_dt is 2016-04-15.
   # 
   # Extracting the year value gives 2016, for an Easter sunday $easter_sunday = 2016-03-27, which is
-  # before the Easter starting point 2016-12-05. So we try the next year, 2017,
+  # before the Easter starting point 2016-04-15. So we try the next year, 2017,
   # for an Easter sunday $easter_sunday = 2017-04-16 and an event 1000 days later $event = 2020-01-11.
+  # 
+  # Lastly, suppose that the event starting point $event_start_dt is 2019-09-01. The Easter sunday
+  # starting point $easter_start_dt is 2016-12-05. Since Easter cannot occur after 04-25 in any
+  # year, so we do not bother to compute Easter for 2016, we directly compute the 2017 Easter sunday.
+  # As above, we obtain an Easter sunday $easter_sunday = 2017-04-16 and an event 1000 days later 
+  # $event = 2020-01-11.
 
   my $class = ref($event_start_dt);
   if ($self->{easter} eq 'eastern' && ! $event_start_dt->isa('DateTime::Calendar::Julian')) {
@@ -128,14 +134,19 @@ sub _following_point {
   }
 
   my $easter_start_dt = $event_start_dt - $self->{offset};
-  my $easter_sunday = $self->_easter($easter_start_dt->year);
-  if ($easter_sunday <= $easter_start_dt) {
-    # 2016-03-27 is no good for 2016-12-05, so let us switch to 2017-04-16
+  my $start_mmdd  = $easter_start_dt->strftime("%m-%d");
+  my $latest_mmdd = '04-25';
+  my $easter_sunday;
+  if ($start_mmdd le $latest_mmdd) {
+    $easter_sunday = $self->_easter($easter_start_dt->year);
+  }
+  if ($start_mmdd gt $latest_mmdd or $easter_sunday <= $easter_start_dt) {
+    #     2016-03-27 is not good for 2016-04-15, so let us switch to 2017-04-16
+    # or: 2016-03-27 has not been calculated for 2016-12-05, so let us choose 2017-04-16
     $easter_sunday = $self->_easter($easter_start_dt->year + 1);
   }
 
   my $event = $easter_sunday + $self->{offset};
-  print '$class ', $class, ", $event ", ref($event), "\n";
 
   $event = $class->from_object(object => $event) if (ref($event) ne $class);
   return $event;
@@ -164,14 +175,18 @@ sub _previous_point {
   }
 
   my $easter_start_dt = $event_start_dt - $self->{offset};
-  my $easter_sunday = $self->_easter($easter_start_dt->year);
-  if ($easter_sunday >= $easter_start_dt) {
+  my $start_mmdd    = $easter_start_dt->strftime("%m-%d");
+  my $earliest_mmdd = '03-21';
+  my $easter_sunday;
+  if ($start_mmdd ge $earliest_mmdd) {
+    $easter_sunday = $self->_easter($easter_start_dt->year);
+  }
+  if ($start_mmdd lt $earliest_mmdd or $easter_sunday >= $easter_start_dt) {
     $easter_sunday = $self->_easter($easter_start_dt->year - 1);
   }
 
   my $event = $easter_sunday + $self->{offset};
 
-  print '$class ', $class, ', $event ', ref($event), ' ', $event, "\n";
   $event = $class->from_object(object => $event) if (ref($event) ne $class);
   return $event;
 }
@@ -208,23 +223,22 @@ sub closest {
 }
 
 sub is {
-  my $self = shift;
-  my $dt   = shift;
+  my ($self, $dt) = @_;
   croak ("Dates need to be datetime objects")
     unless $dt->can('utc_rd_values');
 
-    my $class = ref($dt);
-    if ($class ne 'DateTime') {
-        $dt = DateTime->from_object(object=>$dt);
-    }
+  my $class = ref($dt);
+  if ($self->{easter} eq 'western' && ! $dt->isa('DateTime')) {
+    $dt = DateTime->from_object(object => $dt);
+  }
+  if ($self->{easter} eq 'eastern' && ! $dt->isa('DateTime::Calendar::Julian')) {
+    $dt = DateTime::Calendar::Julian->from_object(object => $dt)   
+  }
+  my $easter_start = $dt - $self->{offset};
 
-    if ($self->{easter} eq 'eastern') {
-        $dt = DateTime::Calendar::Julian->from_object(object=>$dt)   
-    }
+  my $easter_this_year = $self->_easter($easter_start->year) + $self->{offset};
 
-    my $easter_this_year = $self->_easter($dt->year)+$self->{offset};
-
-    return ($easter_this_year->ymd eq $dt->ymd) ? 1 : 0;
+  return ($easter_this_year->ymd eq $dt->ymd) ? 1 : 0;
 }
 
 sub as_list {
@@ -749,6 +763,10 @@ The epact  is a 0..29 number.  The "0" value  is shown as "*"  in some
 sources. This  subroutine does not convert  "0" to "*", the  result is
 always a pure  number. There is no  other special case, for  25 as for
 any other number.
+
+The formula given by Reingold and  Dershowitz is a "shifted epact" and
+gives  different  results from  the  values  printed in  Lefort's  and
+Couderc's books. The module follows Couderc and Lefort.
 
 =item * western_sunday_letter($year), eastern_sunday_letter($year)
 
