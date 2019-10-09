@@ -72,7 +72,7 @@ sub checking {
     $dt = $dt1;
   }
 
-  # checking "following"
+  # checking "previous"
   $dt = $end;
   for my $i (reverse (0..$#list)) {
     my $dt1 = $easter->previous($dt);

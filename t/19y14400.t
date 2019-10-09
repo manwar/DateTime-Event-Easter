@@ -28,8 +28,9 @@
 #
 # This test is based on Eugene van der Pijll's remarks from
 # https://www.nntp.perl.org/group/perl.datetime/2003/03/msg1437.html
-# but taking them in the other way:
-# computing the *Western* Easter with *Julian* dates.
+# but taking them in the other way. Instead of computing Eastern Easter
+# with Gregorian dates, this test script computes
+# the *Western* Easter with *Julian* dates.
 #
 
 use strict;
@@ -67,7 +68,7 @@ sub checking {
     $dt = $dt1;
   }
 
-  # checking "following"
+  # checking "previous"
   $dt = $end;
   for my $i (reverse (0..$#list)) {
     my $dt1 = $easter->previous($dt);

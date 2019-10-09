@@ -131,7 +131,8 @@ Note on version conventions:
         - Kwalitee issues: META.yml should include a "provide" entry and a "resource" entry
 
 1.07 xxx yyyy-mm-dd
-        - Fixed POD issues and improve code formatting
+        - Fixed POD issues and improve code formatting.
         - Improve code coverage.
         - Allow building an infinite (i.e. unbounded) set of spans.
-        - Define separate functions to obtain the computus elements: golden number, epact, sunday letter
+        - Define separate functions to obtain the computus elements: golden number, epact, sunday letter.
+	- Improve (a little) code speed.

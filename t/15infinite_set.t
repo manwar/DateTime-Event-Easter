@@ -52,5 +52,3 @@ my $palm_1901 = $all_palm_sundays_span->previous(DateTime->new(year => 1901, mon
 my $midnight = DateTime->new(year => 1901, month => 3, day => 31, hour => 23, minute => 59);
 ok($palm_1901->contains($midnight), "Span previous is correct");
 
-use YAML;
-#print YAML::Dump($palm_2015);

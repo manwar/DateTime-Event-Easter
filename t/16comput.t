@@ -41,6 +41,7 @@ use DateTime::Event::Easter qw/golden_number
                               /;
 
 # Data coming from Paul Couderc's book, pages 106 to 109.
+# 1991 data cross-referenced with the "Almanach du Facteur" for this year.
 my @data = ( [ 1991, 16,  14  , 'F' , 6, 23, 'G' , 7 ]
            , [ 2020,  7,   5  , 'ED', 4, 14, 'FE', 5 ]
            , [ 1916, 17, '25*', 'BA', 1,  4, 'CB', 2 ]
