@@ -126,7 +126,7 @@ sub _following_point {
   # $event = 2020-01-11.
 
   my $class = ref($event_start_dt);
-  if ($self->{easter} eq 'eastern' && ! $event_start_dt->isa('DateTime::Calendar::Julian')) {
+  if ($self->{easter} eq 'eastern' && $class ne 'DateTime::Calendar::Julian') {
     $event_start_dt = DateTime::Calendar::Julian->from_object(object => $event_start_dt);
   }
   elsif ($class ne 'DateTime') {
@@ -167,7 +167,7 @@ sub _previous_point {
   my ($self, $event_start_dt) = @_;
 
   my $class = ref($event_start_dt);
-  if ($self->{easter} eq 'eastern' && ! $event_start_dt->isa('DateTime::Calendar::Julian')) {
+  if ($self->{easter} eq 'eastern' && $class ne 'DateTime::Calendar::Julian') {
     $event_start_dt = DateTime::Calendar::Julian->from_object(object => $event_start_dt);
   }
   elsif ($class ne 'DateTime') {
@@ -197,10 +197,7 @@ sub closest {
   croak ("Dates need to be datetime objects")
     unless $dt->can('utc_rd_values');
 
-    my $class = ref($dt);
-    if ($class ne 'DateTime') {
-      $dt = DateTime->from_object(object => $dt);
-    }
+  my $class = ref($dt);
 
     if ($self->is($dt)) {
       my $easter = $dt->clone->truncate(to=>'day');
@@ -231,7 +228,7 @@ sub is {
   if ($self->{easter} eq 'western' && $class ne 'DateTime') {
     $dt = DateTime->from_object(object => $dt);
   }
-  if ($self->{easter} eq 'eastern' && ! $dt->isa('DateTime::Calendar::Julian')) {
+  if ($self->{easter} eq 'eastern' && $class ne 'DateTime::Calendar::Julian') {
     $dt = DateTime::Calendar::Julian->from_object(object => $dt)   
   }
 
