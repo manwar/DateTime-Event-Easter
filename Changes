@@ -135,4 +135,7 @@ Note on version conventions:
         - Improve code coverage.
         - Allow building an infinite (i.e. unbounded) set of spans.
         - Define separate functions to obtain the computus elements: golden number, epact, sunday letter.
-	- Improve (a little bit) code speed.
+        - Improve (a little bit) code speed.
+
+1.08 xxx yyyy-mm-dd
+        - xxx
