@@ -87,7 +87,7 @@ sub following {
   my $self   = shift;
   my $dt     = shift;
   croak ("Dates need to be datetime objects")
-    unless $dt->can('utc_rd_values');
+    unless (defined $dt && ref($dt) && $dt->can('utc_rd_values'));
   my $result = $self->_following_point($dt);
   return ($self->{as} eq 'span') 
       ? _tospan($result)
